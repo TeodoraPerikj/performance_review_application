@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    <h1>Users</h1>
+    <table th:if="${appUsers != null}">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Password</th>
+            <th>Task Assigned</th>
+            <th>Task Owned</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="user : ${appUsers}">
+
+            <td th:text="${user.getUsername()}"></td>
+            <td th:text="${user.getName()}"></td>
+            <td th:text="${user.getSurname()}"></td>
+            <td th:text="${user.getPassword()}"></td>
+            <td>
+                <ul>
+                    <li th:each="taskA : ${user.getTaskAssigned()}" th:text="${taskA.getTitle()}"></li>
+                </ul>
+            </td>
+
+            <td>
+                <ul>
+                    <li th:each="taskO : ${user.getTaskOwned()}" th:text="${taskO.getTitle()}"></li>
+                </ul>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div>
+    <h1>Tasks</h1>
+    <table th:if="${allTasks != null}">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Estimation Days</th>
+            <th>Status</th>
+            <th>Assignees</th>
+            <th>Creator</th>
+            <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="task : ${allTasks}">
+
+            <td th:text="${task.getId()}"></td>
+            <td th:text="${task.getTitle()}"></td>
+            <td th:text="${task.getDescription()}"></td>
+            <td th:text="${#temporals.format(task.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${#temporals.format(task.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${task.getEstimationDays()}"></td>
+            <td th:text="${task.getStatus().name()}"></td>
+            <td>
+                <ul>
+                    <li th:each="userA : ${task.getAssignees()}" th:text="${userA.getUsername()}"></li>
+                </ul>
+            </td>
+
+            <td th:text="${task.getCreator().getUsername()}"></td>
+
+            <td>
+                <ul>
+                    <li th:each="comment : ${task.getComments()}" th:text="${comment.getComment()}"></li>
+                </ul>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

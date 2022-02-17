@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Show User Performance</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/tasks}">Task Management Application</a>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/tasks}">All Tasks</a>
+                </li>
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/myTasks}">My Tasks</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/checkPerformance}">Check Performance</a>
+                </li>
+            </ul>
+
+            <a class="btn btn-primary btn-sm ml-3" th:href="@{/logout}">
+                    <i class="fa fa-shopping-cart"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div th:if="${selectedUser} != null">
+
+    <div th:if="${type} == 'Weekly'">
+        <h1>Weekly Performance</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="userTODOTasks"><b>Number of Tasks To Do:</b></label>
+                    <span class="form-control"
+                          id="userTODOTasks"
+                          th:text="${userTODOTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="userOpenTasks"><b>Number of Open Tasks:</b></label>
+                    <span class="form-control"
+                          id="userOpenTasks"
+                          th:text="${userOpenTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="userDoneTasks"><b>Number of Done Tasks:</b></label>
+                    <span class="form-control"
+                          id="userDoneTasks"
+                          th:text="${userDoneTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="userCanceledTasks"><b>Number of Canceled Tasks:</b></label>
+                    <span class="form-control"
+                          id="userCanceledTasks"
+                          th:text="${userCanceledTasks}"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+        <h3>
+            The performance of the user is calculated by the number of tasks that
+            he has completed divided by the total number of tasks assigned.
+        </h3>
+
+        <h3>With this percentage of completed tasks</h3>
+        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3>he is rated as</h3>
+        <h3 th:text="${rate}"></h3>
+
+    </div>
+
+    <div th:if="${type} == 'Monthly'">
+    <h1>Monthly Performance</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="monthlyUserTODOTasks"><b>Number of Tasks To Do:</b></label>
+                    <span class="form-control"
+                          id="monthlyUserTODOTasks"
+                          th:text="${userTODOTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyUserOpenTasks"><b>Number of Open Tasks:</b></label>
+                    <span class="form-control"
+                          id="monthlyUserOpenTasks"
+                          th:text="${userOpenTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyUserDoneTasks"><b>Number of Done Tasks:</b></label>
+                    <span class="form-control"
+                          id="monthlyUserDoneTasks"
+                          th:text="${userDoneTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyUserCanceledTasks"><b>Number of Canceled Tasks:</b></label>
+                    <span class="form-control"
+                          id="monthlyUserCanceledTasks"
+                          th:text="${userCanceledTasks}"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+        <h3>
+            The performance of the user is calculated by the number of tasks that
+            he has completed divided by the total number of tasks assigned.
+        </h3>
+
+        <h3>With this percentage of completed tasks</h3>
+        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3>he is rated as</h3>
+        <h3 th:text="${rate}"></h3>
+
+    </div>
+
+    <div th:if="${type} == 'Yearly'">
+    <h1>Yearly Performance</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="yearlyUserTODOTasks"><b>Number of Tasks To Do:</b></label>
+                    <span class="form-control"
+                          id="yearlyUserTODOTasks"
+                          th:text="${userTODOTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="yearlyUserOpenTasks"><b>Number of Open Tasks:</b></label>
+                    <span class="form-control"
+                          id="yearlyUserOpenTasks"
+                          th:text="${userOpenTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="yearlyUserDoneTasks"><b>Number of Done Tasks:</b></label>
+                    <span class="form-control"
+                          id="yearlyUserDoneTasks"
+                          th:text="${userDoneTasks}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="yearlyUserCanceledTasks"><b>Number of Canceled Tasks:</b></label>
+                    <span class="form-control"
+                          id="yearlyUserCanceledTasks"
+                          th:text="${userCanceledTasks}"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+        <h3>
+            The performance of the user is calculated by the number of tasks that
+            he has completed divided by the total number of tasks assigned.
+        </h3>
+
+        <h3>With this percentage of completed tasks</h3>
+        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3>he is rated as</h3>
+        <h3 th:text="${rate}"></h3>
+
+    </div>
+</div>
+
+<a type="button" class="btn btn-primary" th:href="@{/checkPerformance}">Back</a>
+
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Work On Task</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/tasks}">Task Management Application</a>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/tasks}">All Tasks</a>
+                </li>
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/myTasks}">My Tasks</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"  class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/checkPerformance}">Check Performance</a>
+                </li>
+            </ul>
+            <a class="btn btn-primary btn-sm ml-3" th:href="@{/logout}">
+                <i class="fa fa-shopping-cart"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<h3 style="color: red" th:if="${hasError}" th:text="${error}"></h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="title"><b>Task Title:</b></label>
+                <span class="form-control"
+                      id="title"
+                      th:text="${workTask.getTitle()}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="description"><b>Description:</b></label>
+                <span class="form-control"
+                      id="description"
+                      th:text="${workTask.getDescription()}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="startDate"><b>Start Date:</b></label>
+                <span class="form-control"
+                      id="startDate"
+                      th:text="${#temporals.format(workTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+            <div class="form-group">
+                <label for="dueDate"><b>Due Date:</b></label>
+                <span class="form-control"
+                      id="dueDate"
+                      th:text="${#temporals.format(workTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+            <div class="form-group">
+                <label for="days"><b>Estimation Days:</b></label>
+                <span class="form-control"
+                      id="days"
+                      th:text="${workTask.getEstimationDays()}"></span>
+            </div>
+            <div class="form-group">
+                <label for="status"><b>Status:</b></label>
+                <span class="form-control"
+                      id="status"
+                      th:text="${workTask.getStatus().name()}"></span>
+            </div>
+            <div class="form-group">
+                <label for="creator"><b>Creator:</b></label>
+                <span class="form-control"
+                      id="creator"
+                      th:text="${workTask.getCreator().getUsername()}"></span>
+            </div>
+            <div class="form-group">
+                <label><b>Assignees:</b></label>
+                <ul>
+                    <li th:each="assignee : ${workTask.getAssignees()}"
+                        th:text="${assignee.getUsername()}"></li>
+                </ul>
+            </div>
+
+            <h2>Comments</h2>
+            <div class="table-responsive">
+                <table th:if="${workTask.getComments != null}">
+                    <thead>
+                    <tr>
+                        <th>Created By</th>
+                        <th>Date Created</th>
+                        <th>Comment</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="comment : ${workTask.getComments()}">
+
+                        <td th:text="${comment.getUser().getUsername()}"></td>
+                        <td th:text="${#temporals.format(comment.getDateTime(), 'dd-MM-yyyy HH:mm')}"></td>
+                        <td th:text="${comment.getComment()}">
+
+                        <td class="text-right">
+<!--                        th:if="${comment.getUser().getUsername().equals(session.user.getUsername())}"-->
+                            <form th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"
+                                  th:action="@{/workOnTask/{id}/deleteComment (id=${comment.getId()})}" th:method="POST">
+
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                                </button>
+
+                            </form>
+
+                        <a th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"
+                               th:href="@{/editComment/{id} (id=${comment.getId()})}"
+                               class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${workTask.getComments == null}" th:text="No Comments"></div>
+
+            <div class="form-group">
+                <form th:method="POST" th:action="@{/workOnTask/{id}/leaveComment (id=${workTask?.getId()})}">
+
+                    <label for="comment"><b>Add Comment</b></label>
+                    <input id="comment" name="comment" required placeholder="Leave a comment">
+
+                    <button type="submit" th:text="Submit"></button>
+                </form>
+            </div>
+
+            <a type="button" class="btn btn-primary" th:href="@{/taskInfo/{id} (id=${workTask.getId()})}">Back</a>
+        </div>
+
+        <a type="button" class="btn btn-primary" th:href="@{/workOnTask/{id}/finishTask (id=${workTask.getId()})}">
+            Mark As Done</a>
+
+        <a type="button" class="btn btn-primary" th:href="@{/workOnTask/{id}/cancelTask (id=${workTask.getId()})}">
+            Cancel Task</a>
+
+    </div>
+</div>
+
+</body>
+</html>

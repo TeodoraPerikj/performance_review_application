@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Info</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/tasks}">Task Management Application</a>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/tasks}">All Tasks</a>
+                </li>
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/myTasks}">My Tasks</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/checkPerformance}">Check Performance</a>
+                </li>
+            </ul>
+
+            <a class="btn btn-primary btn-sm ml-3" th:href="@{/logout}">
+                    <i class="fa fa-shopping-cart"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="title"><b>Task Title:</b></label>
+                <span class="form-control"
+                      id="title"
+                      th:text="${selectedTask.getTitle()}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="description"><b>Description:</b></label>
+                <span class="form-control"
+                      id="description"
+                      th:text="${selectedTask.getDescription()}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="startDate"><b>Start Date:</b></label>
+                <span class="form-control"
+                      id="startDate"
+                      th:text="${#temporals.format(selectedTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+            <div class="form-group">
+                <label for="dueDate"><b>Due Date:</b></label>
+                <span class="form-control"
+                      id="dueDate"
+                      th:text="${#temporals.format(selectedTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></span>
+            </div>
+            <div class="form-group">
+                <label for="days"><b>Estimation Days:</b></label>
+                <span class="form-control"
+                      id="days"
+                      th:text="${selectedTask.getEstimationDays()}"></span>
+            </div>
+            <div class="form-group">
+                <label for="status"><b>Status:</b></label>
+                <span class="form-control"
+                      id="status"
+                      th:text="${selectedTask.getStatus().name()}"></span>
+            </div>
+            <div class="form-group">
+                <label for="creator"><b>Creator:</b></label>
+                <span class="form-control"
+                      id="creator"
+                      th:text="${selectedTask.getCreator().getUsername()}"></span>
+            </div>
+            <div class="form-group">
+                <label><b>Assignees:</b></label>
+                <ul>
+                    <li th:each="assignee : ${selectedTask.getAssignees()}"
+                        th:text="${assignee.getUsername()}"></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div>
+    <span style="font-weight: bold" th:if="${textAndType.equals('Not started yet!')}" th:text="${textAndType}"></span>
+    <button th:if="${textAndType.equals('Not started yet!')}"
+            th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+            disabled>
+        Start Task
+    </button>
+</div>
+
+<div>
+    <span style="font-weight: bold" th:if="${textAndType.equals('Task is closed!')}" th:text="${textAndType}"></span>
+    <button th:if="${textAndType.equals('Task is closed!')}"
+       th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+       disabled>
+        Start Task
+    </button>
+</div>
+
+<div>
+    <a th:if="${textAndType.equals('Start Task')}"
+       th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+       th:text="${textAndType}"></a>
+</div>
+
+<div>
+    <a th:if="${textAndType.equals('Join Task')}"
+       th:href="@{/taskInfo/{id}/joinTask (id=${selectedTask?.getId()})}"
+       th:text="${textAndType}"></a>
+</div>
+
+<div>
+    <a th:if="${textAndType.equals('Continue Task')}"
+       th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+       th:text="${textAndType}"></a>
+</div>
+
+<div>
+    <span style="font-weight: bold" th:if="${textAndType.equals('Finished')}" th:text="${textAndType}"></span>
+    <button th:if="${textAndType.equals('Finished')}"
+       th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+       disabled>
+        Start Task
+    </button>
+</div>
+
+<div>
+    <span style="font-weight: bold" th:if="${textAndType.equals('Task has been canceled')}" th:text="${textAndType}"></span>
+    <button th:if="${textAndType.equals('Task has been canceled')}"
+       th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
+       disabled>
+        Start Task
+    </button>
+</div>
+
+<a type="button" class="btn btn-primary" th:href="@{/tasks}">Back</a>
+
+<h3 style="color: red" th:if="${hasError}" th:text="${error}"></h3>
+
+</body>
+</html>

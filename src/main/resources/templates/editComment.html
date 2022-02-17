@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Comment</title>
+</head>
+<body>
+
+<h3 style="color: red" th:if="${hasError}" th:text="${error}"></h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <form th:action="@{/editComment/{id} (id=${changeComment?.getId()})}" th:method="POST">
+
+                <div class="form-group">
+                    <label for="editComment">Edit Comment</label>
+                    <input type="text"
+                           class="form-control"
+                           id="editComment"
+                           name="editComment"
+                           th:value="${changeComment.getComment()}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change</button>
+                <a type="button" class="btn btn-primary" th:href="@{/workOnTask}">Back</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

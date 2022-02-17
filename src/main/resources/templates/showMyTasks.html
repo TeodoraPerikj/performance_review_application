@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>My Tasks</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/tasks}">Task Management Application</a>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul class="navbar-nav m-auto">
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/tasks}">All Tasks</a>
+                </li>
+                <li class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/myTasks}">My Tasks</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item m-auto">
+                    <a class="nav-link active" th:href="@{/checkPerformance}">Check Performance</a>
+                </li>
+            </ul>
+
+            <a class="btn btn-primary btn-sm ml-3" th:href="@{/logout}">
+                    <i class="fa fa-shopping-cart"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<h3 style="color: red" th:if="${hasError}" th:text="${error}"></h3>
+
+<h1>Info</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="TODOTasks"><b>Number of Tasks To Do:</b></label>
+                <span class="form-control"
+                      id="TODOTasks"
+                      th:text="${TODOTasks}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="openTasks"><b>Number of Open Tasks:</b></label>
+                <span class="form-control"
+                      id="openTasks"
+                      th:text="${openTasks}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="doneTasks"><b>Number of Done Tasks:</b></label>
+                <span class="form-control"
+                      id="doneTasks"
+                      th:text="${doneTasks}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="canceledTasks"><b>Number of Canceled Tasks:</b></label>
+                <span class="form-control"
+                      id="canceledTasks"
+                      th:text="${canceledTasks}"></span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1>List My Tasks</h1>
+
+<div class="container mb-4">
+    <div class="row">
+        <h1>Assigned Tasks</h1>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                <tr>
+                    <th>Task Title</th>
+                    <th>Description</th>
+                    <th>Created By</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Estimation Days</th>
+                    <th>Status</th>
+                    <th>Assignees</th>
+                    <th>Comments</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:if="${myToDoTask != null}" th:each="myToDoTask : ${myToDoTasks}">
+
+                    <td th:text="${myToDoTask.getTitle()}"></td>
+                    <td th:text="${myToDoTask.getDescription()}"></td>
+                    <td th:text="(${myToDoTask.getCreator()} != null ? ${myToDoTask.getCreator().getUsername()} : 'No Creator')"></td>
+                    <td th:text="${#temporals.format(myToDoTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(myToDoTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${myToDoTask.getEstimationDays()}"></td>
+                    <td th:text="${myToDoTask.getStatus().name()}"></td>
+
+                    <td th:if="${myToDoTask.getAssignees() == null}" th:text="No Assignees"></td>
+                    <td th:if="${myToDoTask.getAssignees() != null}">
+                        <ul>
+                            <li th:each="assignee : ${myToDoTask.getAssignees()}"  th:text="${assignee.getUsername()}"></li>
+                        </ul>
+                    </td>
+
+                    <td th:if="${myToDoTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myToDoTask.getComments() != null}">
+                        <ul>
+                            <li th:each="comment : ${myToDoTask.getComments()}"  th:text="${comment.getComment()}"></li>
+                        </ul>
+                    </td>
+
+                    <td class="text-right">
+
+                        <form th:if="${myToDoTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                        th:action="@{/myTasks/delete/{id} (id=${myToDoTask.getId()})}" th:method="POST">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                            </button>
+                        </form>
+                        <a th:if="${myToDoTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                           th:href="@{/myTasks/edit-task/{id} (id=${myToDoTask.getId()})}"
+                           class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                    </td>
+
+                    <td class="text-right">
+
+                        <a th:href="@{/taskInfo/{id} (id=${myToDoTask.getId()})}"
+                           class="btn btn-sm btn-info">
+                            <i class="fa fa-trash">View Task</i></a>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${myInProgressTask != null}" th:each="myInProgressTask : ${myInProgressTasks}">
+
+                    <td th:text="${myInProgressTask.getTitle()}"></td>
+                    <td th:text="${myInProgressTask.getDescription()}"></td>
+                    <td th:text="(${myInProgressTask.getCreator()} != null ? ${myInProgressTask.getCreator().getUsername()} : 'No Creator')"></td>
+                    <td th:text="${#temporals.format(myInProgressTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(myInProgressTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${myInProgressTask.getEstimationDays()}"></td>
+                    <td th:text="${myInProgressTask.getStatus().name()}"></td>
+
+                    <td th:if="${myInProgressTask.getAssignees() == null}" th:text="No Assignees"></td>
+                    <td th:if="${myInProgressTask.getAssignees() != null}">
+                        <ul>
+                            <li th:each="assignee : ${myInProgressTask.getAssignees()}"  th:text="${assignee.getUsername()}"></li>
+                        </ul>
+                    </td>
+
+                    <td th:if="${myInProgressTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myInProgressTask.getComments() != null}">
+                        <ul>
+                            <li th:each="comment : ${myInProgressTask.getComments()}"  th:text="${comment.getComment()}"></li>
+                        </ul>
+                    </td>
+
+                    <td class="text-right">
+
+                        <form th:if="${myInProgressTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                              th:action="@{/myTasks/delete/{id} (id=${myInProgressTask.getId()})}" th:method="POST">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                            </button>
+                        </form>
+                        <a th:if="${myInProgressTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                           th:href="@{/myTasks/edit-task/{id} (id=${myInProgressTask.getId()})}"
+                           class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                    </td>
+
+                    <td class="text-right">
+
+                        <a th:href="@{/taskInfo/{id} (id=${myInProgressTask.getId()})}"
+                           class="btn btn-sm btn-info">
+                            <i class="fa fa-trash">View Task</i></a>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${myDoneTask != null}" th:each="myDoneTask : ${myDoneTasks}">
+
+                    <td th:text="${myDoneTask.getTitle()}"></td>
+                    <td th:text="${myDoneTask.getDescription()}"></td>
+                    <td th:text="(${myDoneTask.getCreator()} != null ? ${myDoneTask.getCreator().getUsername()} : 'No Creator')"></td>
+                    <td th:text="${#temporals.format(myDoneTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(myDoneTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${myDoneTask.getEstimationDays()}"></td>
+                    <td th:text="${myDoneTask.getStatus().name()}"></td>
+
+                    <td th:if="${myDoneTask.getAssignees() == null}" th:text="No Assignees"></td>
+                    <td th:if="${myDoneTask.getAssignees() != null}">
+                        <ul>
+                            <li th:each="assignee : ${myDoneTask.getAssignees()}"  th:text="${assignee.getUsername()}"></li>
+                        </ul>
+                    </td>
+
+                    <td th:if="${myDoneTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myDoneTask.getComments() != null}">
+                        <ul>
+                            <li th:each="comment : ${myDoneTask.getComments()}"  th:text="${comment.getComment()}"></li>
+                        </ul>
+                    </td>
+
+                    <td class="text-right">
+
+                        <form th:if="${myDoneTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                              th:action="@{/myTasks/delete/{id} (id=${myDoneTask.getId()})}" th:method="POST">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                            </button>
+                        </form>
+                        <a th:if="${myDoneTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                           th:href="@{/myTasks/edit-task/{id} (id=${myDoneTask.getId()})}"
+                           class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                    </td>
+
+                    <td class="text-right">
+
+                        <a th:href="@{/taskInfo/{id} (id=${myDoneTask.getId()})}"
+                           class="btn btn-sm btn-info">
+                            <i class="fa fa-trash">View Task</i></a>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${myCanceledTask != null}" th:each="myCanceledTask : ${myCanceledTasks}">
+
+                    <td th:text="${myCanceledTask.getTitle()}"></td>
+                    <td th:text="${myCanceledTask.getDescription()}"></td>
+                    <td th:text="(${myCanceledTask.getCreator()} != null ? ${myCanceledTask.getCreator().getUsername()} : 'No Creator')"></td>
+                    <td th:text="${#temporals.format(myCanceledTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(myCanceledTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${myCanceledTask.getEstimationDays()}"></td>
+                    <td th:text="${myCanceledTask.getStatus().name()}"></td>
+
+                    <td th:if="${myCanceledTask.getAssignees() == null}" th:text="No Assignees"></td>
+                    <td th:if="${myCanceledTask.getAssignees() != null}">
+                        <ul>
+                            <li th:each="assignee : ${myCanceledTask.getAssignees()}"  th:text="${assignee.getUsername()}"></li>
+                        </ul>
+                    </td>
+
+                    <td th:if="${myCanceledTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myCanceledTask.getComments() != null}">
+                        <ul>
+                            <li th:each="comment : ${myCanceledTask.getComments()}"  th:text="${comment.getComment()}"></li>
+                        </ul>
+                    </td>
+
+                    <td class="text-right">
+                        <!--                        th:if="${canceledTask.getCreator().getUsername().equals(${session.user.getUsername()})}"-->
+                        <form th:if="${myCanceledTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                              th:action="@{/myTasks/delete/{id} (id=${myCanceledTask.getId()})}" th:method="POST">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                            </button>
+                        </form>
+                        <a th:if="${myCanceledTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                           th:href="@{/myTasks/edit-task/{id} (id=${myCanceledTask.getId()})}"
+                           class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                    </td>
+
+                    <td class="text-right">
+
+                        <a th:href="@{/taskInfo/{id} (id=${myCanceledTask.getId()})}"
+                           class="btn btn-sm btn-info">
+                            <i class="fa fa-trash">View Task</i></a>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col mb-3">
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <a th:href="@{/myTasks/add-task}" class="btn btn-block btn-dark">Add new task</a>
+                </div>
+            </div>
+        </div>
+        <h1>Owned Tasks</h1>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                <tr>
+                    <th>Task Title</th>
+                    <th>Description</th>
+                    <th>Created By</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Estimation Days</th>
+                    <th>Status</th>
+                    <th>Assignees</th>
+                    <th>Comments</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:if="${ownedTask != null}" th:each="ownedTask : ${ownedTasks}">
+
+                    <td th:text="${ownedTask.getTitle()}"></td>
+                    <td th:text="${ownedTask.getDescription()}"></td>
+                    <td th:text="(${ownedTask.getCreator()} != null ? ${ownedTask.getCreator().getUsername()} : 'No Creator')"></td>
+                    <td th:text="${#temporals.format(ownedTask.getStartDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(ownedTask.getDueDate(), 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${ownedTask.getEstimationDays()}"></td>
+                    <td th:text="${ownedTask.getStatus().name()}"></td>
+
+                    <td th:if="${ownedTask.getAssignees() == null}" th:text="No Assignees"></td>
+                    <td th:if="${ownedTask.getAssignees() != null}">
+                        <ul>
+                            <li th:each="assignee : ${ownedTask.getAssignees()}"  th:text="${assignee.getUsername()}"></li>
+                        </ul>
+                    </td>
+
+                    <td th:if="${ownedTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${ownedTask.getComments() != null}">
+                        <ul>
+                            <li th:each="comment : ${ownedTask.getComments()}"  th:text="${comment.getComment()}"></li>
+                        </ul>
+                    </td>
+
+                    <td class="text-right">
+
+                        <form th:if="${ownedTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                              th:action="@{/myTasks/delete/{id} (id=${ownedTask.getId()})}" th:method="POST">
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i>
+                            </button>
+                        </form>
+                        <a th:if="${ownedTask.getCreator().getUsername().equals(#request.getRemoteUser())}"
+                           th:href="@{/myTasks/edit-task/{id} (id=${ownedTask.getId()})}"
+                           class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                    </td>
+
+                    <td class="text-right">
+
+                        <a th:href="@{/taskInfo/{id} (id=${ownedTask.getId()})}"
+                           class="btn btn-sm btn-info">
+                            <i class="fa fa-trash">View Task</i></a>
+
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
