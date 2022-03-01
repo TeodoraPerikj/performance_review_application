@@ -15,7 +15,7 @@ public interface TaskService {
     Task edit(Long id, String title, String description, String startDate, String dueDate,
               Integer estimationDays, List<User> assignees);
 
-    void delete(Long id);
+    Task delete(Long id);
 
     List<Task> listAll();
 

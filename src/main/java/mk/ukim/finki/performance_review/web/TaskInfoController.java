@@ -1,6 +1,7 @@
 package mk.ukim.finki.performance_review.web;
 
 import mk.ukim.finki.performance_review.model.Task;
+import mk.ukim.finki.performance_review.model.User;
 import mk.ukim.finki.performance_review.model.exceptions.TaskNotFoundException;
 import mk.ukim.finki.performance_review.model.exceptions.UserAlreadyAssignedException;
 import mk.ukim.finki.performance_review.model.exceptions.UserNotFoundException;
@@ -10,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/taskInfo")
@@ -41,21 +44,26 @@ public class TaskInfoController {
             return "redirect:/tasks?error="+exception.getMessage();
         }
 
+        List<User> assignedUsers = task.getAssignees().stream().distinct().collect(Collectors.toList());
+
         model.addAttribute("selectedTask", task);
         model.addAttribute("textAndType", textAndType);
+        model.addAttribute("assignedUsers", assignedUsers);
 
         return "taskInfo";
     }
 
-    @GetMapping("/{id}/joinTask")
+    @PostMapping("/{id}/joinTask")
     public String addAssignee(@PathVariable Long id, HttpServletRequest request){
 
-        try {
-            this.taskService.addAssignee(id, request.getRemoteUser());
-        } catch (UserAlreadyAssignedException | TaskNotFoundException | UserNotFoundException exception){
-            String url = "redirect:/taskInfo/"+id+"?error="+exception.getMessage();
+        String username = request.getRemoteUser();
 
-            return url;
+        try {
+            this.taskService.addAssignee(id, username);
+        } catch (UserAlreadyAssignedException | TaskNotFoundException | UserNotFoundException exception){
+            String url = "/taskInfo/"+id+"?error="+exception.getMessage();
+
+            return "redirect:"+url;
         }
 
         return "redirect:/workOnTask/"+id;

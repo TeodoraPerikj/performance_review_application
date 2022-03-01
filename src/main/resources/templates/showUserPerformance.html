@@ -76,7 +76,7 @@
         </h3>
 
         <h3>With this percentage of completed tasks</h3>
-        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3 th:text="${rate} != 'Do not have assigned tasks to see performance' ? ${calculatedPerformance}+'%' : '0.0'"></h3>
         <h3>he is rated as</h3>
         <h3 th:text="${rate}"></h3>
 
@@ -126,7 +126,7 @@
         </h3>
 
         <h3>With this percentage of completed tasks</h3>
-        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3 th:text="${rate} != 'Do not have assigned tasks to see performance' ? ${calculatedPerformance}+'%' : '0.0'"></h3>
         <h3>he is rated as</h3>
         <h3 th:text="${rate}"></h3>
 
@@ -176,7 +176,7 @@
         </h3>
 
         <h3>With this percentage of completed tasks</h3>
-        <h3 th:text="${rate} != 'Do not have tasks to see performance' ? ${calculatedPerformance} : '0.0'"></h3>
+        <h3 th:text="${rate} != 'Do not have assigned tasks to see performance' ? ${calculatedPerformance}+'%' : '0.0'"></h3>
         <h3>he is rated as</h3>
         <h3 th:text="${rate}"></h3>
 

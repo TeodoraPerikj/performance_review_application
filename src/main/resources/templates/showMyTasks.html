@@ -109,7 +109,7 @@
                         </ul>
                     </td>
 
-                    <td th:if="${myToDoTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myToDoTask.getComments().size() == 0}">No Comments</td>
                     <td th:if="${myToDoTask.getComments() != null}">
                         <ul>
                             <li th:each="comment : ${myToDoTask.getComments()}"  th:text="${comment.getComment()}"></li>
@@ -155,7 +155,7 @@
                         </ul>
                     </td>
 
-                    <td th:if="${myInProgressTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myInProgressTask.getComments().size() == 0}">No Comments</td>
                     <td th:if="${myInProgressTask.getComments() != null}">
                         <ul>
                             <li th:each="comment : ${myInProgressTask.getComments()}"  th:text="${comment.getComment()}"></li>
@@ -201,7 +201,7 @@
                         </ul>
                     </td>
 
-                    <td th:if="${myDoneTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myDoneTask.getComments().size() == 0}">No Comments</td>
                     <td th:if="${myDoneTask.getComments() != null}">
                         <ul>
                             <li th:each="comment : ${myDoneTask.getComments()}"  th:text="${comment.getComment()}"></li>
@@ -247,7 +247,7 @@
                         </ul>
                     </td>
 
-                    <td th:if="${myCanceledTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${myCanceledTask.getComments().size() == 0}">No Comments</td>
                     <td th:if="${myCanceledTask.getComments() != null}">
                         <ul>
                             <li th:each="comment : ${myCanceledTask.getComments()}"  th:text="${comment.getComment()}"></li>
@@ -322,7 +322,7 @@
                         </ul>
                     </td>
 
-                    <td th:if="${ownedTask.getComments() == null}" th:text="No Comments"></td>
+                    <td th:if="${ownedTask.getComments().size() == 0}">No Comments</td>
                     <td th:if="${ownedTask.getComments() != null}">
                         <ul>
                             <li th:each="comment : ${ownedTask.getComments()}"  th:text="${comment.getComment()}"></li>

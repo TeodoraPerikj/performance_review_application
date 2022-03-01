@@ -82,7 +82,7 @@
             <div class="form-group">
                 <label><b>Assignees:</b></label>
                 <ul>
-                    <li th:each="assignee : ${workTask.getAssignees()}"
+                    <li th:each="assignee : ${assignedUsers}"
                         th:text="${assignee.getUsername()}"></li>
                 </ul>
             </div>
@@ -99,7 +99,7 @@
                     </thead>
                     <tbody>
 
-                    <tr th:each="comment : ${workTask.getComments()}">
+                    <tr th:each="comment : ${commentsForTask}">
 
                         <td th:text="${comment.getUser().getUsername()}"></td>
                         <td th:text="${#temporals.format(comment.getDateTime(), 'dd-MM-yyyy HH:mm')}"></td>
@@ -124,7 +124,7 @@
                 </table>
             </div>
 
-            <div th:if="${workTask.getComments == null}" th:text="No Comments"></div>
+            <div th:if="${workTask.getComments.size() == 0}">No Comments</div>
 
             <div class="form-group">
                 <form th:method="POST" th:action="@{/workOnTask/{id}/leaveComment (id=${workTask?.getId()})}">
@@ -139,11 +139,17 @@
             <a type="button" class="btn btn-primary" th:href="@{/taskInfo/{id} (id=${workTask.getId()})}">Back</a>
         </div>
 
-        <a type="button" class="btn btn-primary" th:href="@{/workOnTask/{id}/finishTask (id=${workTask.getId()})}">
-            Mark As Done</a>
+        <form th:method="POST" th:action="@{/workOnTask/{id}/finishTask (id=${workTask.getId()})}">
 
-        <a type="button" class="btn btn-primary" th:href="@{/workOnTask/{id}/cancelTask (id=${workTask.getId()})}">
-            Cancel Task</a>
+            <button type="submit">Mark As Done</button>
+
+        </form>
+
+        <form th:method="POST" th:action="@{/workOnTask/{id}/cancelTask (id=${workTask.getId()})}">
+
+            <button type="submit">Cancel Task</button>
+
+        </form>
 
     </div>
 </div>

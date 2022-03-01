@@ -34,7 +34,7 @@ public class LoginController {
 
     @PostMapping
     public String login(HttpServletRequest request) {
-        User user = null;
+        User user;
         try{
             user = this.userService.login(request.getParameter("username"),
                     request.getParameter("password"));

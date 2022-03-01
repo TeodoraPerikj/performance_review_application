@@ -80,7 +80,7 @@
             <div class="form-group">
                 <label><b>Assignees:</b></label>
                 <ul>
-                    <li th:each="assignee : ${selectedTask.getAssignees()}"
+                    <li th:each="assignee : ${assignedUsers}"
                         th:text="${assignee.getUsername()}"></li>
                 </ul>
             </div>
@@ -90,8 +90,8 @@
 </div>
 
 <div>
-    <span style="font-weight: bold" th:if="${textAndType.equals('Not started yet!')}" th:text="${textAndType}"></span>
-    <button th:if="${textAndType.equals('Not started yet!')}"
+    <span style="font-weight: bold" th:if="${textAndType.equals('Not opened yet!')}" th:text="${textAndType}"></span>
+    <button th:if="${textAndType.equals('Not opened yet!')}"
             th:href="@{/workOnTask/{id} (id=${selectedTask?.getId()})}"
             disabled>
         Start Task
@@ -114,9 +114,13 @@
 </div>
 
 <div>
-    <a th:if="${textAndType.equals('Join Task')}"
-       th:href="@{/taskInfo/{id}/joinTask (id=${selectedTask?.getId()})}"
-       th:text="${textAndType}"></a>
+    <form th:if="${textAndType.equals('Join Task')}"
+          th:action="@{/taskInfo/{id}/joinTask (id=${selectedTask?.getId()})}"
+          th:method="POST">
+
+        <button type="submit" th:text="${textAndType}"></button>
+
+    </form>
 </div>
 
 <div>

@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +33,9 @@ public class TaskServiceImpl implements TaskService {
 
         if(!checkArgumentsValidity(title, description, startDate, dueDate, estimationDays, username))
             throw new InvalidArgumentsException();
+
+        if(estimationDays <= 0)
+            throw new EstimationDaysOutOfRangeException(estimationDays);
 
         User creator = this.userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
@@ -58,6 +60,9 @@ public class TaskServiceImpl implements TaskService {
                 || startDate.isEmpty() || dueDate == null || dueDate.isEmpty() || estimationDays == null)
             throw new InvalidArgumentsException();
 
+        if(estimationDays <= 0)
+            throw new EstimationDaysOutOfRangeException(estimationDays);
+
         LocalDateTime localStartDate = LocalDateTime.parse(startDate);
         LocalDateTime localDueDate = LocalDateTime.parse(dueDate);
 
@@ -77,15 +82,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Long id) {
+    public Task delete(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
 
         this.taskRepository.delete(task);
+
+        return task;
     }
 
     @Override
     public List<Task> listAll() {
-        return this.taskRepository.findAll();
+        return this.taskRepository.findAll().stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -118,7 +125,7 @@ public class TaskServiceImpl implements TaskService {
 
         }
 
-        return tasksByStartDate;
+        return tasksByStartDate.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -137,7 +144,7 @@ public class TaskServiceImpl implements TaskService {
 
         }
 
-        return tasksByDueDate;
+        return tasksByDueDate.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -145,28 +152,28 @@ public class TaskServiceImpl implements TaskService {
 
         User creator = this.userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        return this.taskRepository.findByStatusAndCreator(status, creator);
+        return this.taskRepository.findByStatusAndCreator(status, creator).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
     public List<User> listAssignees(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
 
-        return task.getAssignees();
+        return task.getAssignees().stream().distinct().collect(Collectors.toList());
     }
 
     @Override
     public List<Task> findByCreator(String username) {
         User creator = this.userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        return this.taskRepository.findByCreator(creator);
+        return this.taskRepository.findByCreator(creator).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
     public List<Comment> listComments(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
 
-        return task.getComments();
+        return task.getComments().stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -175,7 +182,7 @@ public class TaskServiceImpl implements TaskService {
         if(status == null)
             throw new InvalidArgumentsException();
 
-        return this.taskRepository.findByStatus(status);
+        return this.taskRepository.findByStatus(status).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -186,24 +193,24 @@ public class TaskServiceImpl implements TaskService {
         LocalDateTime dateTime = LocalDateTime.now();
 
         if(task.getStartDate().isAfter(dateTime))
-            return "Not started yet!";
+            return "Not opened yet!";
         else if(task.getDueDate().isBefore(dateTime))
             return "Task is closed!";
         else {
 
             if(task.getStatus().equals(TaskStatus.TODO)){
 
-                if (task.getAssignees().stream()
+                if (task.getAssignees().stream().distinct()
                         .filter(assignee -> assignee.getUsername().equals(user.getUsername()))
-                        .collect(Collectors.toList()).size() == 1)
+                        .collect(Collectors.toList()).size() > 0)
                     return "Start Task";
 
                 return "Join Task";
             } else if(task.getStatus().equals(TaskStatus.InProgress)) {
 
-                if (task.getAssignees().stream()
+                if (task.getAssignees().stream().distinct()
                         .filter(assignee -> assignee.getUsername().equals(user.getUsername()))
-                        .collect(Collectors.toList()).size() == 1)
+                        .collect(Collectors.toList()).size() > 0)
                     return "Continue Task";
 
                 return "Join Task";
@@ -223,9 +230,9 @@ public class TaskServiceImpl implements TaskService {
 
         User user = this.userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        List<User> users = task.getAssignees();
+        List<User> users = task.getAssignees().stream().distinct().collect(Collectors.toList());
 
-        if(users.stream().filter(user1 -> user1.getUsername().equals(user.getUsername()))
+        if(users.stream().distinct().filter(user1 -> user1.getUsername().equals(user.getUsername()))
                 .collect(Collectors.toList()).size() > 0)
             throw new UserAlreadyAssignedException();
 

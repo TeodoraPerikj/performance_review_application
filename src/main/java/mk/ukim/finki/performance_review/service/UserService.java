@@ -18,7 +18,7 @@ public interface UserService {
 
     List<Task> listOwnedTasks(String username);
 
-    void delete(String username);
+    User delete(String username);
 
     List<Task> listTasksByStatus(String username, TaskStatus status);
 
@@ -31,4 +31,6 @@ public interface UserService {
     List<Integer> findNumberOfTasksByType(String username, String type);
 
     List<Integer> filterByDate(String username, String dateFrom, String dateTo);
+
+    List<String> calculatePerformanceAndRating(List<Integer> numberOfTasks);
 }

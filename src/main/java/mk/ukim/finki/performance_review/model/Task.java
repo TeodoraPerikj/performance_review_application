@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -58,6 +58,10 @@ public class Task {
         this.creator = creator;
         this.comments = new ArrayList<>();
 
+    }
+
+    public List<Comment> getDistinctComments(){
+        return this.comments.stream().distinct().collect(Collectors.toList());
     }
 
 }

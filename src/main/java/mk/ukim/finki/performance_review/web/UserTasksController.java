@@ -3,10 +3,7 @@ package mk.ukim.finki.performance_review.web;
 import mk.ukim.finki.performance_review.model.Task;
 import mk.ukim.finki.performance_review.model.enumerations.TaskStatus;
 import mk.ukim.finki.performance_review.model.User;
-import mk.ukim.finki.performance_review.model.exceptions.InvalidArgumentsException;
-import mk.ukim.finki.performance_review.model.exceptions.LocalDateTimeException;
-import mk.ukim.finki.performance_review.model.exceptions.TaskNotFoundException;
-import mk.ukim.finki.performance_review.model.exceptions.UserNotFoundException;
+import mk.ukim.finki.performance_review.model.exceptions.*;
 import mk.ukim.finki.performance_review.service.TaskService;
 import mk.ukim.finki.performance_review.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -14,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -93,81 +89,10 @@ public class UserTasksController {
             return "redirect:/myTasks?error="+exception.getMessage();
         }
 
-        model.addAttribute("myTask", task);
+        model.addAttribute("task", task);
         model.addAttribute("users", this.userService.listAll());
 
         return "add_task";
-    }
-
-    @PostMapping("/add")
-    public String addNewTask(@RequestParam String title, @RequestParam String description, @RequestParam String startDate,
-                             @RequestParam String dueDate, @RequestParam Integer days,
-                             @RequestParam List<String> assignees, HttpServletRequest request){
-
-        List<User> assignedUsers;
-        assignedUsers= new ArrayList<>();
-
-        for(String username : assignees){
-
-            User findUser;
-
-            try{
-                findUser = this.userService.findByUsername(username);
-            }catch (UserNotFoundException exception){
-                return "redirect:/myTasks?error="+exception.getMessage();
-            }
-
-            assignedUsers.add(findUser);
-        }
-
-        try{
-            this.taskService.create(title, description, startDate,
-                    dueDate, days, request.getRemoteUser(), assignedUsers);
-        }catch (LocalDateTimeException | InvalidArgumentsException exception){
-            return "redirect:/myTasks?error="+exception.getMessage();
-        }
-
-
-        return "redirect:/myTasks";
-    }
-
-    @PostMapping("/add/{id}")
-    public String editTask(@PathVariable Long id, @RequestParam String title, @RequestParam String description,
-                           @RequestParam String startDate, @RequestParam String dueDate, @RequestParam Integer days,
-                           @RequestParam(required = false) List<String> assignees){
-
-        List<User> users = new ArrayList<>();
-
-        if(assignees != null) {
-            for (String username : assignees) {
-                User findUser;
-
-                try {
-                    findUser = this.userService.findByUsername(username);
-                } catch (UserNotFoundException exception) {
-                    return "redirect:/myTasks?error=" + exception.getMessage();
-                }
-
-                users.add(findUser);
-            }
-        }
-        else{
-            Task task;
-            try{
-                task = this.taskService.findById(id);
-            }catch (TaskNotFoundException exception){
-                return "redirect:/myTasks?error="+exception.getMessage();
-            }
-            users = task.getAssignees();
-        }
-
-        try {
-            this.taskService.edit(id, title, description, startDate, dueDate, days, users);
-        }catch (LocalDateTimeException | InvalidArgumentsException exception){
-            return "redirect:/myTasks?error="+exception.getMessage();
-        }
-
-        return "redirect:/myTasks";
     }
 
     @PostMapping("/delete/{id}")

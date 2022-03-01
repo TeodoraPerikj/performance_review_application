@@ -2,11 +2,7 @@ package mk.ukim.finki.performance_review.web;
 
 import mk.ukim.finki.performance_review.model.Task;
 import mk.ukim.finki.performance_review.model.User;
-import mk.ukim.finki.performance_review.model.enumerations.TaskStatus;
-import mk.ukim.finki.performance_review.model.exceptions.InvalidArgumentsException;
-import mk.ukim.finki.performance_review.model.exceptions.LocalDateTimeException;
-import mk.ukim.finki.performance_review.model.exceptions.TaskNotFoundException;
-import mk.ukim.finki.performance_review.model.exceptions.UserNotFoundException;
+import mk.ukim.finki.performance_review.model.exceptions.*;
 import mk.ukim.finki.performance_review.service.TaskService;
 import mk.ukim.finki.performance_review.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class TasksController {
@@ -36,27 +33,9 @@ public class TasksController {
             model.addAttribute("error", error);
         }
 
-        List<Task> toDoTasks;
-        List<Task> inProgressTasks;
-        List<Task> doneTasks;
-        List<Task> canceledTasks;
+        List<Task> allTasks = this.taskService.listAll();
 
-        try {
-
-            toDoTasks = this.taskService.findByStatus(TaskStatus.TODO);
-            inProgressTasks = this.taskService.findByStatus(TaskStatus.InProgress);
-            doneTasks = this.taskService.findByStatus(TaskStatus.Done);
-            canceledTasks = this.taskService.findByStatus(TaskStatus.Canceled);
-
-        }catch (InvalidArgumentsException exception){
-            return "redirect:/tasks?error="+exception.getMessage();
-        }
-
-        model.addAttribute("toDoTasks", toDoTasks);
-        model.addAttribute("inProgressTasks", inProgressTasks);
-        model.addAttribute("doneTasks", doneTasks);
-        model.addAttribute("canceledTasks", canceledTasks);
-        model.addAttribute("allTasks", this.taskService.listAll());
+        model.addAttribute("allTasks", allTasks);
 
         return "showTasks";
     }
@@ -74,7 +53,7 @@ public class TasksController {
     @GetMapping("/tasks/edit-task/{id}")
     public String getEditTaskPage(@PathVariable Long id, Model model){
 
-        Task task = null;
+        Task task;
 
         try{
             task = this.taskService.findById(id);
@@ -112,7 +91,8 @@ public class TasksController {
         try{
             this.taskService.create(title, description, startDate,
                     dueDate, days, request.getRemoteUser(), assignedUsers);
-        }catch (LocalDateTimeException | InvalidArgumentsException exception){
+        }catch (LocalDateTimeException | InvalidArgumentsException
+                | EstimationDaysOutOfRangeException exception){
             return "redirect:/tasks?error="+exception.getMessage();
         }
 
@@ -146,7 +126,7 @@ public class TasksController {
                 return "redirect:/tasks?error="+exception.getMessage();
             }
 
-            users = task.getAssignees();
+            users = task.getAssignees().stream().distinct().collect(Collectors.toList());
         }
 
         try {

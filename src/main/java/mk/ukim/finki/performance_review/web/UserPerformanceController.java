@@ -34,40 +34,28 @@ public class UserPerformanceController {
             return "redirect:/checkPerformance?error="+exception.getMessage();
         }
 
-        List<Integer> numberOfTasks = null;
-        Double calculatedPerformance = Double.valueOf(0);
+        List<Integer> numberOfTasks;
 
         if(type.equals("Weekly")){
+            if(dateFrom == null || dateFrom.isEmpty() || dateTo == null || dateTo.isEmpty())
+                return "redirect:/checkPerformance?error=Date+from+or+date+to+is+empty!";
             numberOfTasks = this.userService.filterByDate(user.getUsername(), dateFrom, dateTo);
         }else {
             numberOfTasks = this.userService.findNumberOfTasksByType(user.getUsername(), type);
         }
 
-        Integer numberOfTasksAssigned = numberOfTasks.get(0)+numberOfTasks.get(1)
-                +numberOfTasks.get(2)+numberOfTasks.get(3);
+        List<String> calculatedPerformanceAndRating = this.userService.calculatePerformanceAndRating(numberOfTasks);
 
-        Integer numberOfDoneTasks = numberOfTasks.get(2);
+        String calculatedPerformance = String.format("%.2f",Double.valueOf(calculatedPerformanceAndRating.get(1)));
 
-        calculatedPerformance = Double.valueOf(numberOfDoneTasks)/Double.valueOf(numberOfTasksAssigned);
-        calculatedPerformance*=100;
-
-        String rate;
-
-        if(calculatedPerformance<50)
-            rate = "Underrated";
-        else if(calculatedPerformance > 50)
-            rate = "Overrated";
-        else if(calculatedPerformance.equals(50.0)) rate = "Fine";
-        else rate = "Do not have tasks to see performance";
 
         model.addAttribute("userTODOTasks", numberOfTasks.get(0));
         model.addAttribute("userOpenTasks", numberOfTasks.get(1));
         model.addAttribute("userDoneTasks", numberOfTasks.get(2));
         model.addAttribute("userCanceledTasks", numberOfTasks.get(3));
         model.addAttribute("type", type);
-        model.addAttribute("calculatedPerformance", calculatedPerformance);
-        model.addAttribute("rate", rate);
-
+        model.addAttribute("rate", calculatedPerformanceAndRating.get(0));
+        model.addAttribute("calculatedPerformance", Double.valueOf(calculatedPerformance));
         model.addAttribute("selectedUser", user);
 
         return "showUserPerformance";

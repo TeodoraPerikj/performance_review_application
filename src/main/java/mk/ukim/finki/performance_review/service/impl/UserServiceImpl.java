@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
-        return user.getTaskAssigned();
+        return user.getTaskAssigned().stream().distinct().collect(Collectors.toList());
 
     }
 
@@ -79,15 +79,17 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
-        return user.getTaskOwned();
+        return user.getTaskOwned().stream().distinct().collect(Collectors.toList());
     }
 
     @Override
-    public void delete(String username) {
+    public User delete(String username) {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
         this.userRepository.delete(user);
+
+        return user;
     }
 
     @Override
@@ -96,9 +98,10 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
-        List<Task> tasksByUser = findTasksByUser(user.getUsername());
+        List<Task> tasksByUser = findTasksByUser(user.getUsername())
+                .stream().distinct().collect(Collectors.toList());
 
-        return this.findTasksByStatus(status, tasksByUser);
+        return this.findTasksByStatus(status, tasksByUser).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -119,12 +122,16 @@ public class UserServiceImpl implements UserService {
 
         List<Integer> numberOfTasks = new ArrayList<>();
 
-        List<Task> allTasks = user.getTaskAssigned();
+        List<Task> allTasks = user.getTaskAssigned().stream().distinct().collect(Collectors.toList());
 
-        Integer TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks).size();
-        Integer openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks).size();
-        Integer doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks).size();
-        Integer canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks).size();
+        Integer TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks)
+                .stream().distinct().collect(Collectors.toList()).size();
+        Integer openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks)
+                .stream().distinct().collect(Collectors.toList()).size();
+        Integer doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks)
+                .stream().distinct().collect(Collectors.toList()).size();
+        Integer canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks)
+                .stream().distinct().collect(Collectors.toList()).size();
 
         numberOfTasks.add(TODOTasks);
         numberOfTasks.add(openTasks);
@@ -141,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
         List<Integer> numberOfTasks = new ArrayList<>();
 
-        List<Task> allTasks = user.getTaskAssigned();
+        List<Task> allTasks = user.getTaskAssigned().stream().distinct().collect(Collectors.toList());
 
         Integer TODOTasks = 0;
         Integer openTasks = 0;
@@ -152,31 +159,35 @@ public class UserServiceImpl implements UserService {
 
         if(type.equals("Monthly")){
 
-            TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks).stream()
+            TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks).stream().distinct()
                     .filter(task -> task.getStartDate().getMonth().equals(timeNow.getMonth()))
                     .collect(Collectors.toList()).size();
 
-            openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks).stream()
+            openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks).stream().distinct()
                     .filter(task -> task.getStartDate().getMonth().equals(timeNow.getMonth()))
                     .collect(Collectors.toList()).size();
 
-            doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks).stream()
+            doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks).stream().distinct()
                     .filter(task -> task.getStartDate().getMonth().equals(timeNow.getMonth()))
                     .collect(Collectors.toList()).size();
 
-            canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks).stream()
+            canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks).stream().distinct()
                     .filter(task -> task.getStartDate().getMonth().equals(timeNow.getMonth()))
                     .collect(Collectors.toList()).size();
 
         } else if(type.equals("Yearly")){
 
-            TODOTasks = filterByYear(this.findTasksByStatus(TaskStatus.TODO, allTasks), timeNow.getYear());
+            TODOTasks = filterByYear(this.findTasksByStatus(TaskStatus.TODO, allTasks)
+                    .stream().distinct().collect(Collectors.toList()), timeNow.getYear());
 
-            openTasks = filterByYear(this.findTasksByStatus(TaskStatus.InProgress, allTasks), timeNow.getYear());
+            openTasks = filterByYear(this.findTasksByStatus(TaskStatus.InProgress, allTasks)
+                    .stream().distinct().collect(Collectors.toList()), timeNow.getYear());
 
-            doneTasks = filterByYear(this.findTasksByStatus(TaskStatus.Done, allTasks), timeNow.getYear());
+            doneTasks = filterByYear(this.findTasksByStatus(TaskStatus.Done, allTasks)
+                    .stream().distinct().collect(Collectors.toList()), timeNow.getYear());
 
-            canceledTasks = filterByYear(this.findTasksByStatus(TaskStatus.Canceled, allTasks), timeNow.getYear());
+            canceledTasks = filterByYear(this.findTasksByStatus(TaskStatus.Canceled, allTasks)
+                    .stream().distinct().collect(Collectors.toList()), timeNow.getYear());
         }
 
         numberOfTasks.add(TODOTasks);
@@ -195,12 +206,12 @@ public class UserServiceImpl implements UserService {
 
         List<Integer> numberOfTasks = new ArrayList<>();
 
-        List<Task> allTasks = user.getTaskAssigned();
+        List<Task> allTasks = user.getTaskAssigned().stream().distinct().collect(Collectors.toList());
 
         LocalDate startDate = LocalDate.parse(dateFrom);
         LocalDate endDate = LocalDate.parse(dateTo);
 
-        Integer TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks).stream()
+        Integer TODOTasks = this.findTasksByStatus(TaskStatus.TODO, allTasks).stream().distinct()
                 .filter(task -> (task.getStartDate().toLocalDate().isAfter(startDate)
                                 && task.getStartDate().toLocalDate().isBefore(endDate))
                                 || task.getStartDate().toLocalDate().isEqual(startDate)
@@ -208,7 +219,7 @@ public class UserServiceImpl implements UserService {
                 )
                 .collect(Collectors.toList()).size();
 
-        Integer openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks).stream()
+        Integer openTasks = this.findTasksByStatus(TaskStatus.InProgress, allTasks).stream().distinct()
                 .filter(task -> (task.getStartDate().toLocalDate().isAfter(startDate)
                         && task.getStartDate().toLocalDate().isBefore(endDate))
                         || task.getStartDate().toLocalDate().isEqual(startDate)
@@ -216,7 +227,7 @@ public class UserServiceImpl implements UserService {
                 )
                 .collect(Collectors.toList()).size();
 
-        Integer doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks).stream()
+        Integer doneTasks = this.findTasksByStatus(TaskStatus.Done, allTasks).stream().distinct()
                  .filter(task -> (task.getStartDate().toLocalDate().isAfter(startDate)
                         && task.getStartDate().toLocalDate().isBefore(endDate))
                         || task.getStartDate().toLocalDate().isEqual(startDate)
@@ -224,7 +235,7 @@ public class UserServiceImpl implements UserService {
                  )
                 .collect(Collectors.toList()).size();
 
-        Integer canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks).stream()
+        Integer canceledTasks = this.findTasksByStatus(TaskStatus.Canceled, allTasks).stream().distinct()
                 .filter(task -> (task.getStartDate().toLocalDate().isAfter(startDate)
                         && task.getStartDate().toLocalDate().isBefore(endDate))
                         || task.getStartDate().toLocalDate().isEqual(startDate)
@@ -238,6 +249,36 @@ public class UserServiceImpl implements UserService {
         numberOfTasks.add(canceledTasks);
 
         return numberOfTasks;
+    }
+
+    @Override
+    public List<String> calculatePerformanceAndRating(List<Integer> numberOfTasks) {
+
+        Double calculatedPerformance;
+
+        Integer numberOfTasksAssigned = numberOfTasks.get(0)+numberOfTasks.get(1)
+                +numberOfTasks.get(2)+numberOfTasks.get(3);
+
+        Integer numberOfDoneTasks = numberOfTasks.get(2);
+
+        calculatedPerformance = Double.valueOf(numberOfDoneTasks)/Double.valueOf(numberOfTasksAssigned);
+        calculatedPerformance*=100;
+
+        String rate;
+
+        if(calculatedPerformance<50)
+            rate = "Underrated";
+        else if(calculatedPerformance > 50)
+            rate = "Overrated";
+        else if(calculatedPerformance.equals(50.0))
+            rate = "Fine";
+        else rate = "Do not have assigned tasks to see performance";
+
+        List<String> calculatedPerformanceAndRating = new ArrayList<>();
+        calculatedPerformanceAndRating.add(rate);
+        calculatedPerformanceAndRating.add(calculatedPerformance.toString());
+
+        return calculatedPerformanceAndRating;
     }
 
     private Integer filterByYear(List<Task> tasks, int year){
@@ -264,7 +305,7 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        return tasksByStatus;
+        return tasksByStatus.stream().distinct().collect(Collectors.toList());
     }
 
     private List<Task> findTasksByUser(String username){
@@ -273,11 +314,11 @@ public class UserServiceImpl implements UserService {
 
         for(Task task : this.taskRepository.findAll()){
 
-            if (task.getAssignees().stream().filter(assignee -> assignee.getUsername().equals(username))
+            if (task.getAssignees().stream().distinct().filter(assignee -> assignee.getUsername().equals(username))
                     .collect(Collectors.toList()).size() > 0)
                 tasksByUser.add(task);
         }
 
-        return tasksByUser;
+        return tasksByUser.stream().distinct().collect(Collectors.toList());
     }
 }

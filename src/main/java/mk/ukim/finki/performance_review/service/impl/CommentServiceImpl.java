@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -86,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
 
         Task task = this.taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
 
-        return this.commentRepository.findByTask(task);
+        return this.commentRepository.findByTask(task).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -98,9 +99,10 @@ public class CommentServiceImpl implements CommentService {
 
         LocalDate localDate = localDateTime.toLocalDate();
 
-        List<Comment> foundCommentsByTask = this.commentRepository.findByTask(task);
+        List<Comment> foundCommentsByTask = this.commentRepository.findByTask(task)
+                .stream().distinct().collect(Collectors.toList());
 
-        return this.findCommentsByDate(localDate, foundCommentsByTask);
+        return this.findCommentsByDate(localDate, foundCommentsByTask).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -110,7 +112,7 @@ public class CommentServiceImpl implements CommentService {
 
         User user = this.userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        return this.commentRepository.findByTaskAndUser(task, user);
+        return this.commentRepository.findByTaskAndUser(task, user).stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -123,9 +125,10 @@ public class CommentServiceImpl implements CommentService {
         LocalDateTime localDateTime = LocalDateTime.parse(date);
         LocalDate localDate = localDateTime.toLocalDate();
 
-        List<Comment> foundCommentsForTaskAndUser = this.commentRepository.findByTaskAndUser(task, user);
+        List<Comment> foundCommentsForTaskAndUser = this.commentRepository.findByTaskAndUser(task, user)
+                .stream().distinct().collect(Collectors.toList());
 
-        return this.findCommentsByDate(localDate, foundCommentsForTaskAndUser);
+        return this.findCommentsByDate(localDate, foundCommentsForTaskAndUser).stream().distinct().collect(Collectors.toList());
     }
 
     private List<Comment> findCommentsByDate(LocalDate localDate, List<Comment> comments){
@@ -140,6 +143,6 @@ public class CommentServiceImpl implements CommentService {
                 foundComments.add(comment);
         }
 
-        return foundComments;
+        return foundComments.stream().distinct().collect(Collectors.toList());
     }
 }
