@@ -18,19 +18,19 @@ const PerformanceReviewService = {
         return axios.delete(`/tasks/delete/${id}`);
     },
 
-    addTask: (title, description, startDate, dueDate, estimationDays, assignees) => {
-        debugger;
+    addTask: (title, description, startDate, dueDate, estimationDays, assignees, creator) => {
         return axios.post("/tasks/add" , {
             "title" : title,
             "description" : description,
             "startDate" : startDate,
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
-            "assignees" : assignees
+            "assignees" : assignees,
+            "creator" : creator
         });
     },
 
-    editTask: (id,title, description, startDate, dueDate, estimationDays, assignees) => {
+    editTask: (id,title, description, startDate, dueDate, estimationDays, assignees, creator) => {
         debugger;
         return axios.put(`/tasks/add/${id}`,{
             "title" : title,
@@ -38,7 +38,8 @@ const PerformanceReviewService = {
             "startDate" : startDate,
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
-            "assignees" : assignees
+            "assignees" : assignees,
+            "creator" : creator
         });
     },
 
@@ -54,14 +55,51 @@ const PerformanceReviewService = {
     },
 
     getUserByUsername: (username) => {
-        debugger;
-        return axios.get(`/findUser?username=${username}`)
+
+        return axios.get(`/findUser?username=${username}`);
     },
 
     viewTask: (id) => {
+
+        return axios.get(`/taskInfo/${id}?username=user2`);
+    },
+
+    workOnTask: (id) => {
+        return axios.get(`/workOnTask/${id}`);
+    },
+
+    leaveComment: (id, username, comment) => {
         debugger;
-        let taskInfo = axios.get(`/taskInfo/${id}?username=user2`);
-        return taskInfo;
+        return axios.post(`/workOnTask/${id}/leaveComment?username=${username}&comment=${comment}`)
+    },
+
+    showUserPerformance: (chosenUsername, chosenType, dateFrom, dateTo) => {
+        debugger;
+        console.log(chosenUsername)
+        console.log(chosenType)
+        console.log(dateFrom)
+        console.log(dateTo)
+
+        return axios.get(`/showUserPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`)
+
+        // return axios.get("/showUserPerformance", {
+        //     "chosenUsername": chosenUsername,
+        //     "chosenType": chosenType,
+        //     "dateFrom": dateFrom,
+        //     "dateTo": dateTo
+        // })
+    },
+
+    deleteComment: (id) => {
+        return axios.delete(`/workOnTask/${id}/deleteComment`);
+    },
+
+    getComment: (id) => {
+        return axios.get(`/editComment/${id}`);
+    },
+
+    changeComment: (id, editComment) => {
+        return axios.put(`/editComment/${id}?editComment=${editComment}`);
     }
 }
 

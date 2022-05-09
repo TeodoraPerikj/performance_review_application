@@ -5,6 +5,8 @@ import mk.ukim.finki.performance_review.model.Task;
 import mk.ukim.finki.performance_review.model.User;
 import mk.ukim.finki.performance_review.model.dto.*;
 import mk.ukim.finki.performance_review.model.enumerations.TaskStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +20,7 @@ public interface TaskService {
     Optional<Task> edit(Long id, String title, String description, String startDate, String dueDate,
               Integer estimationDays, List<User> assignees);
 
-    Optional<Task> delete(Long id);
+    void delete(Long id);
 
     List<Task> listAll();
 
@@ -60,4 +62,8 @@ public interface TaskService {
                                      String dueDate, Integer days, List<User> assignees);
 
     List<Task> findFirst5();
+
+    Page<EachTaskDto> findAllWithPagination(Pageable pageable);
+
+    List<EachTaskDto> findEachTask();
 }

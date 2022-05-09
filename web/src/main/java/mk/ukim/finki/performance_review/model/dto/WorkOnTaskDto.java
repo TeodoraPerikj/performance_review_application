@@ -12,11 +12,11 @@ public class WorkOnTaskDto {
 
     private Task task;
 
-    private List<User> assignedUsers;
+    private List<String> assignedUsers;
 
-    private List<Comment> comments;
+    private List<CommentsForTaskDto> comments;
 
-    public WorkOnTaskDto(Task task, List<User> assignedUsers, List<Comment> comments){
+    public WorkOnTaskDto(Task task, List<String> assignedUsers, List<CommentsForTaskDto> comments){
         this.task = task;
         this.assignedUsers = assignedUsers;
         this.comments = comments;

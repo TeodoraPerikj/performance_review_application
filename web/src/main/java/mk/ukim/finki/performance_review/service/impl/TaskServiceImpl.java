@@ -6,9 +6,12 @@ import mk.ukim.finki.performance_review.model.User;
 import mk.ukim.finki.performance_review.model.dto.*;
 import mk.ukim.finki.performance_review.model.enumerations.TaskStatus;
 import mk.ukim.finki.performance_review.model.exceptions.*;
+import mk.ukim.finki.performance_review.model.projections.CommentProjection;
 import mk.ukim.finki.performance_review.repository.TaskRepository;
 import mk.ukim.finki.performance_review.repository.UserRepository;
 import mk.ukim.finki.performance_review.service.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,10 +26,12 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final CommentServiceImpl commentService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository, CommentServiceImpl commentService) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.commentService = commentService;
     }
 
     @Override
@@ -96,12 +101,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Optional<Task> delete(Long id) {
+    public void delete(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
 
         this.taskRepository.delete(task);
-
-        return Optional.of(task);
     }
 
     @Override
@@ -327,9 +330,21 @@ public class TaskServiceImpl implements TaskService {
 
         List<User> assignedUsers = task.getAssignees().stream().distinct().collect(Collectors.toList());
 
-        List<Comment> commentsForTask = task.getComments().stream().distinct().collect(Collectors.toList());
+        List<String> assignees = new ArrayList<>();
 
-        WorkOnTaskDto workOnTaskDto = new WorkOnTaskDto(task, assignedUsers, commentsForTask);
+        for(User user:assignedUsers)
+            assignees.add(user.getUsername());
+
+       // List<Comment> commentsForTask = task.getComments().stream().distinct().collect(Collectors.toList());
+
+//        List<String> comments = new ArrayList<>();
+//
+//        for(Comment comment:commentsForTask)
+//            comments.add(comment.getComment());
+
+        List<CommentsForTaskDto> comments = this.commentService.findByCommentProjection(id);
+
+        WorkOnTaskDto workOnTaskDto = new WorkOnTaskDto(task, assignees, comments);
 
         return Optional.of(workOnTaskDto);
     }
@@ -378,6 +393,61 @@ public class TaskServiceImpl implements TaskService {
                 break;
         }
         return tasks;
+    }
+
+    @Override
+    public Page<EachTaskDto> findAllWithPagination(Pageable pageable) {
+       Page<Task> tasks = this.taskRepository.findAll(pageable);
+
+       List<EachTaskDto> eachTaskDtos = null;
+
+       for(Task task : tasks){
+
+           List<User> users = task.getAssignees().stream().distinct().collect(Collectors.toList());
+           List<String> assignees = new ArrayList<>();
+
+           for(User user : users){
+               assignees.add(user.getUsername());
+           }
+
+           String creator = task.getCreator().getUsername();
+
+           List<CommentsForTaskDto> comments = this.commentService.findByCommentProjection(task.getId());
+
+           EachTaskDto eachTaskDto = new EachTaskDto(task.getId(), task.getTitle(), task.getDescription(), task.getStartDate(),
+                   task.getDueDate(), task.getEstimationDays(), task.getStatus(), assignees, creator, comments);
+
+           eachTaskDtos.add(eachTaskDto);
+       }
+       Page<EachTaskDto> allTasks = (Page<EachTaskDto>) eachTaskDtos;
+
+       return allTasks;
+    }
+
+    @Override
+    public List<EachTaskDto> findEachTask() {
+        List<Task> tasks = this.taskRepository.findAll();
+        List<EachTaskDto> eachTaskDtos = new ArrayList<>();
+
+        for(Task task : tasks){
+
+            List<User> users = task.getAssignees().stream().distinct().collect(Collectors.toList());
+            List<String> assignees = new ArrayList<>();
+
+            for(User user : users){
+                assignees.add(user.getUsername());
+            }
+
+            String creator = task.getCreator().getUsername();
+
+            List<CommentsForTaskDto> comments = this.commentService.findByCommentProjection(task.getId());
+
+            EachTaskDto eachTaskDto = new EachTaskDto(task.getId(), task.getTitle(), task.getDescription(), task.getStartDate(),
+                    task.getDueDate(), task.getEstimationDays(), task.getStatus(), assignees, creator, comments);
+
+            eachTaskDtos.add(eachTaskDto);
+        }
+        return eachTaskDtos;
     }
 
     private boolean checkArgumentsValidity(String title, String description, String startDate, String dueDate,

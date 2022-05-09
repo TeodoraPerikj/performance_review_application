@@ -12,6 +12,10 @@ import Login from "../Login/login";
 import MyTasks from "../MyTasks/myTasks";
 import SelectUser from "../Users/SelectUser/SelectUser";
 import TaskInfo from "../Tasks/TaskInfo/TaskInfo";
+import WorkOnTask from "../Tasks/WorkOnTask/workOnTask";
+import SelectParameters from "../ShowPerformance/SelectParameters/selectParameters";
+import UserPerformance from "../ShowPerformance/UserPerformance/userPerformance";
+import CommentEdit from "../Comments/CommentEdit/commentEdit";
 
 class App extends Component {
 
@@ -36,8 +40,10 @@ class App extends Component {
                 <main>
                     <div className={"container"}>
                         <Switch>
-                            <Route path={"/tasks/taskInfo/:id"} exact render={() =>
-                            <TaskInfo taskInfo={this.state.taskInfo}/>}/>
+                            <Route path={"/comments/edit/:id"} exact render={() => <CommentEdit/>}/>
+                            <Route path={"/workOnTask/:id"} exact render={() =>
+                                <WorkOnTask onDeleteComment={this.deleteComment}/>}/>
+                            <Route path={"/tasks/taskInfo/:id"} exact render={() => <TaskInfo/>}/>
                             <Route path={"/tasks/edit/:id"} exact render={() =>
                                 <TaskEdit users={this.state.users} onEditTask={this.editTask}/>}/>
                             <Route path={"/tasks/add"} exact render={() =>
@@ -49,12 +55,17 @@ class App extends Component {
                                 <Users users={this.state.users}/>}/>
                             <Route path={"/comments"} exact render={() =>
                                 <Comments comments={this.state.comments}/>}/>
+                            <Route path={"/selectParameters"} exact render={() =>
+                                <SelectParameters users={this.state.users}/>}/>
                             <Route path={"/login"} exact render={() => <Login onLogin={this.login}/>}/>
-                            <Route path={"/myTasks"} exact render={() =>
-                                <MyTasks userInfoForTask={this.state.selectedUserInfo} onEdit={this.editTask}
-                                         onDelete={this.deleteTask}/> }/>
-                            <Route path={"/selectUser"} exact render={() =>
-                                <SelectUser users={this.state.users} onSelect={this.getUserByUsername}/>}/>
+                            <Route path={"/selectUser"} exact render={() => <SelectUser users={this.state.users}/>}/>
+                            <Route path={"/showPerformance"} exact render={() => <UserPerformance/>}/>
+                            <Route path={"/myTasks/:username"} exact render={() => <MyTasks/>}/>
+
+                             {/*<MyTasks userInfoForTask={this.state.selectedUserInfo} onEdit={this.editTask}*/}
+                             {/*            onDelete={this.deleteTask}/> }/>*/}
+                             {/*<Route path={"/selectUser"} exact render={() =>*/}
+                             {/*    <SelectUser users={this.state.users} onSelect={this.getUserByUsername}/>}/>*/}
                             <Redirect to={"/tasks"}/>
                         </Switch>
                     </div>
@@ -104,8 +115,8 @@ class App extends Component {
             })
     }
 
-    addTask = (title, description, startDate, dueDate, estimationDays, assignees) => {
-        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignees)
+    addTask = (title, description, startDate, dueDate, estimationDays, assignees, creator) => {
+        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignees, creator)
             .then(() => {
                 this.loadTasks();
             });
@@ -121,6 +132,7 @@ class App extends Component {
     }
 
     editTask = (id, title, description, startDate, dueDate, estimationDays, assignees) => {
+        debugger;
         PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignees)
             .then(() => {
                 this.loadTasks();
@@ -157,6 +169,12 @@ class App extends Component {
             })
     }
 
+    deleteComment = (id) => {
+        PerformanceReviewRepository.deleteComment(id)
+            .then(() => {
+                this.loadComments()
+            })
+    }
 }
 
 export default App;

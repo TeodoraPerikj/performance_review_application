@@ -311,7 +311,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserPerformanceDto> showUserPerformance(String chosenUsername, String type,
+    public Optional<UserPerformanceDto> showUserPerformance(String chosenUsername, String chosenType,
                                                             String dateFrom, String dateTo) {
         User user = null;
 
@@ -320,18 +320,21 @@ public class UserServiceImpl implements UserService {
 
         List<Integer> numberOfTasks;
 
-        if(type.equals("Weekly")){
+        if(chosenType.equals("Weekly")){
             numberOfTasks = this.filterByDate(user.getUsername(), dateFrom, dateTo);
         }else {
-            numberOfTasks = this.findNumberOfTasksByType(user.getUsername(), type);
+            numberOfTasks = this.findNumberOfTasksByType(user.getUsername(), chosenType);
         }
 
         List<String> calculatedPerformanceAndRating = this.calculatePerformanceAndRating(numberOfTasks);
 
         String calculatedPerformance = String.format("%.2f",Double.valueOf(calculatedPerformanceAndRating.get(1)));
 
+        String calculatedPerf = calculatedPerformance.replace(",",".");
+        Double value = Double.valueOf(calculatedPerf);
+
         UserPerformanceDto userPerformanceDto = new UserPerformanceDto(user, numberOfTasks,
-                calculatedPerformanceAndRating, Double.valueOf(calculatedPerformance), type);
+                calculatedPerformanceAndRating, value, chosenType);
 
         return Optional.of(userPerformanceDto);
     }

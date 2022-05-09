@@ -16,15 +16,17 @@ public class TaskDto {
     String dueDate;
     String estimationDays;
     String assignees;
+    String creator;
 
-    public TaskDto(String title, String description, String startDate,
-                   String dueDate, String estimationDays, String assignees){
+    public TaskDto(String title, String description, String startDate, String dueDate,
+                   String estimationDays, String assignees, String creator){
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.estimationDays = estimationDays;
         this.assignees = assignees;
+        this.creator = creator;
     }
 
 }

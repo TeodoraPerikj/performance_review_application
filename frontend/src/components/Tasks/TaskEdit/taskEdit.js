@@ -13,16 +13,15 @@ const TaskEdit = (props) => {
         startDate: "",
         dueDate: "",
         estimationDays: "",
-        assignees: ""
+        assignees: "",
+        creator: ""
 
     });
 
     useEffect(() => {
-        console.log(id);
 
         const selectedTask = PerformanceReviewRepository.getTask(id)
             .then((data) => {
-                console.log(data)
                 updateFormData({
                     title: data.data.title,
                     description: data.data.description,
@@ -38,7 +37,7 @@ const TaskEdit = (props) => {
     }, [])
 
     const handleChange = (e) => {
-        debugger;
+
         updateFormData({
             ...formData,
             [e.target.name]: e.target.value.trim()
@@ -54,9 +53,14 @@ const TaskEdit = (props) => {
         const dueDate = formData.dueDate !== "" ? formData.dueDate : props.task.dueDate;
         const estimationDays = formData.estimationDays !== "" ? formData.estimationDays : props.task.estimationDays;
         const assignees = formData.assignees !== "" ? formData.assignees : props.task.assignees;
+        const creator = formData.creator;
 
-        props.onEditTask(props.task.id, title, description, startDate, dueDate, estimationDays, assignees);
-        history.push("/tasks");
+        PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignees, creator)
+            .then(() => {
+                // history.push("/tasks")
+                window.open("/tasks","_self")
+            })
+
     }
 
     return (
@@ -70,7 +74,6 @@ const TaskEdit = (props) => {
                                    className="form-control"
                                    id="title"
                                    name="title"
-                                   required
                                    placeholder={formData.title}
                                    onChange={handleChange}/>
                         </div>
@@ -80,7 +83,6 @@ const TaskEdit = (props) => {
                                    className="form-control"
                                    id="description"
                                    name="description"
-                                   required
                                    placeholder={formData.description}
                                    onChange={handleChange}/>
                         </div>
@@ -90,7 +92,6 @@ const TaskEdit = (props) => {
                                    className="form-control"
                                    id="startDate"
                                    name="startDate"
-                                   required
                                    placeholder={formData.startDate}
                                    onChange={handleChange}/>
                         </div>
@@ -100,7 +101,6 @@ const TaskEdit = (props) => {
                                    className="form-control"
                                    id="dueDate"
                                    name="dueDate"
-                                   required
                                    placeholder={formData.dueDate}
                                    onChange={handleChange}/>
                         </div>
@@ -110,7 +110,6 @@ const TaskEdit = (props) => {
                                    className="form-control"
                                    id="estimationDays"
                                    name="estimationDays"
-                                   required
                                    placeholder={formData.estimationDays}
                                    onChange={handleChange}/>
                         </div>

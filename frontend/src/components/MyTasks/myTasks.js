@@ -1,49 +1,99 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useParams} from "react-router";
+import PerformanceReviewRepository from "../../repository/performanceReviewRepository";
 
-const myTasks = (props) => {
+const MyTasks = (props) => {
+
+    const {username} = useParams();
+
+    const [formData, updateFormData] = React.useState({
+        myToDoTasks : [],
+        myDoneTasks : [],
+        myCanceledTasks : [],
+        myInProgressTasks : [],
+        ownedTasks : [],
+        TODOTasks : 0,
+        openTasks : 0,
+        doneTasks : 0,
+        canceledTasks : 0
+    });
+
+    useEffect(() => {
+
+        PerformanceReviewRepository.getUserByUsername(username)
+            .then((data) => {
+                updateFormData({
+                    myToDoTasks: data.data.myToDoTasks,
+                    myDoneTasks: data.data.myDoneTasks,
+                    myCanceledTasks: data.data.myCanceledTasks,
+                    myInProgressTasks: data.data.myInProgressTasks,
+                    ownedTasks: data.data.ownedTasks,
+                    TODOTasks: data.data.numberOfTasks[0],
+                    openTasks: data.data.numberOfTasks[1],
+                    doneTasks: data.data.numberOfTasks[2],
+                    canceledTasks: data.data.numberOfTasks[3]
+                })
+            }).catch((error) =>{
+                console.log(error)
+            });
+
+    }, [])
+
+    const handleChange = (e) => {
+        updateFormData({
+            ...formData,
+            [e.target.name]: e.target.value.trim()
+        })
+    }
 
     return (
         <div>
-        <h1>Info</h1>
+        <h3>Info</h3>
 
-    {/*<div className="container">*/}
-    {/*    <div className="row">*/}
-    {/*        <div className="col-md-5">*/}
-    {/*            <div className="form-group">*/}
-    {/*                <label htmlFor="TODOTasks"><b>Number of Tasks To Do:</b></label>*/}
-    {/*                <span className="form-control"*/}
-    {/*                      id="TODOTasks">*/}
-    {/*                    {props.numberOfTasks.get(0)}*/}
-    {/*                </span>*/}
-    {/*            </div>*/}
+    <div className="container">
+        <div className="row">
+            <div className="col-md-5">
+                <div className="form-group">
+                    <label htmlFor="TODOTasks"><b>Number of Tasks To Do:</b></label>
+                    <span className="form-control"
+                          id="TODOTasks">
+                        {formData.TODOTasks}
+                    </span>
+                </div>
 
-    {/*            <div className="form-group">*/}
-    {/*                <label htmlFor="openTasks"><b>Number of Open Tasks:</b></label>*/}
-    {/*                <span className="form-control"*/}
-    {/*                      id="openTasks">{props.numberOfTasks.get(1)}</span>*/}
-    {/*            </div>*/}
+                <div className="form-group">
+                    <label htmlFor="openTasks"><b>Number of Open Tasks:</b></label>
+                    <span className="form-control"
+                          id="openTasks">
+                        {formData.openTasks}
+                    </span>
+                </div>
 
-    {/*            <div className="form-group">*/}
-    {/*                <label htmlFor="doneTasks"><b>Number of Done Tasks:</b></label>*/}
-    {/*                <span className="form-control"*/}
-    {/*                      id="doneTasks">{props.numberOfTasks.get(2)}</span>*/}
-    {/*            </div>*/}
+                <div className="form-group">
+                    <label htmlFor="doneTasks"><b>Number of Done Tasks:</b></label>
+                    <span className="form-control"
+                          id="doneTasks">
+                        {formData.doneTasks}
+                    </span>
+                </div>
 
-    {/*            <div className="form-group">*/}
-    {/*                <label htmlFor="canceledTasks"><b>Number of Canceled Tasks:</b></label>*/}
-    {/*                <span className="form-control"*/}
-    {/*                      id="canceledTasks">{props.numberOfTasks.get(3)}</span>*/}
-    {/*            </div>*/}
+                <div className="form-group">
+                    <label htmlFor="canceledTasks"><b>Number of Canceled Tasks:</b></label>
+                    <span className="form-control"
+                          id="canceledTasks">
+                        {formData.canceledTasks}
+                    </span>
+                </div>
 
-    {/*        </div>*/}
-    {/*    </div>*/}
-    {/*</div>*/}
+            </div>
+        </div>
+    </div>
 
-    <h1>List My Tasks</h1>
+    <h3>List My Tasks</h3>
 
     <div className="container mb-4">
         <div className="row">
-            <h1>Assigned Tasks</h1>
+            <h3>Assigned Tasks</h3>
             <div className="table-responsive">
                 <table>
                     <thead>
@@ -60,7 +110,7 @@ const myTasks = (props) => {
                     </thead>
                     <tbody>
 
-                    {props.userInfoForTask.myToDoTasks.map((myToDoTask) => {
+                    {formData.myToDoTasks.map((myToDoTask) => {
                        return (
                            <tr>
 
@@ -78,7 +128,8 @@ const myTasks = (props) => {
                                 {/*to={`/tasks/edit-task/${term.id}`}>Edit</Link>*/}
                                 <a title={"Edit"} className={"btn btn-primary"}
                                     // href={`/tasks/add/${props.term.id}`}>
-                                   onClick={() => props.onEdit(myToDoTask.id)}>
+                                   // onClick={() => props.onEdit(myToDoTask.id)}>
+                                    href={`/tasks/edit/${myToDoTask.id}`}>
                                     Edit
                                 </a>
                             </td>
@@ -93,7 +144,7 @@ const myTasks = (props) => {
                        );
                     })}
 
-                    {props.userInfoForTask.myInProgressTasks.map((myInProgressTask) => {
+                    {formData.myInProgressTasks.map((myInProgressTask) => {
                         return (
                             <tr>
 
@@ -111,7 +162,8 @@ const myTasks = (props) => {
                                 {/*to={`/tasks/edit-task/${term.id}`}>Edit</Link>*/}
                                 <a title={"Edit"} className={"btn btn-primary"}
                                     // href={`/tasks/add/${props.term.id}`}>
-                                   onClick={() => props.onEdit(myInProgressTask.id)}>
+                                   // onClick={() => props.onEdit(myInProgressTask.id)}>
+                                    href={`/tasks/edit/${myInProgressTask.id}`}>
                                     Edit
                                 </a>
                             </td>
@@ -126,7 +178,7 @@ const myTasks = (props) => {
                         );
                     })}
 
-                    {props.userInfoForTask.myDoneTasks.map((myDoneTask) => {
+                    {formData.myDoneTasks.map((myDoneTask) => {
                         return (
                             <tr>
 
@@ -144,7 +196,8 @@ const myTasks = (props) => {
                                 {/*to={`/tasks/edit-task/${term.id}`}>Edit</Link>*/}
                                 <a title={"Edit"} className={"btn btn-primary"}
                                     // href={`/tasks/add/${props.term.id}`}>
-                                   onClick={() => props.onEdit(myDoneTask.id)}>
+                                   // onClick={() => props.onEdit(myDoneTask.id)}>
+                                    href={`/tasks/edit/${myDoneTask.id}`}>
                                     Edit
                                 </a>
                             </td>
@@ -159,7 +212,7 @@ const myTasks = (props) => {
                         );
                     })}
 
-                    {props.userInfoForTask.myCanceledTasks.map((myCancelTask) => {
+                    {formData.myCanceledTasks.map((myCancelTask) => {
                         return (
                             <tr>
 
@@ -177,7 +230,8 @@ const myTasks = (props) => {
                                 {/*to={`/tasks/edit-task/${term.id}`}>Edit</Link>*/}
                                 <a title={"Edit"} className={"btn btn-primary"}
                                     // href={`/tasks/add/${props.term.id}`}>
-                                   onClick={() => props.onEdit(myCancelTask.id)}>
+                                   // onClick={() => props.onEdit(myCancelTask.id)}>
+                                    href={`/tasks/edit/${myCancelTask.id}`}>
                                     Edit
                                 </a>
                             </td>
@@ -202,7 +256,7 @@ const myTasks = (props) => {
                 </div>
             </div>
 
-            <h1>Owned Tasks</h1>
+            <h3>Owned Tasks</h3>
             <div className="table-responsive">
                 <table>
                     <thead>
@@ -219,7 +273,7 @@ const myTasks = (props) => {
                     </thead>
                     <tbody>
 
-                    {props.userInfoForTask.ownedTasks.map((ownedTask) => {
+                    {formData.ownedTasks.map((ownedTask) => {
                         return (
                             <tr>
 
@@ -237,7 +291,8 @@ const myTasks = (props) => {
                                 {/*to={`/tasks/edit-task/${term.id}`}>Edit</Link>*/}
                                 <a title={"Edit"} className={"btn btn-primary"}
                                     // href={`/tasks/add/${props.term.id}`}>
-                                   onClick={() => props.onEdit(ownedTask.id)}>
+                                   // onClick={() => props.onEdit(ownedTask.id)}>
+                                    href={`/tasks/edit/${ownedTask.id}`}>
                                     Edit
                                 </a>
                             </td>
@@ -260,4 +315,4 @@ const myTasks = (props) => {
 );
 }
 
-export default myTasks;
+export default MyTasks;

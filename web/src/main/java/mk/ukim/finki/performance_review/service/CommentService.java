@@ -2,6 +2,8 @@ package mk.ukim.finki.performance_review.service;
 
 import mk.ukim.finki.performance_review.model.Comment;
 import mk.ukim.finki.performance_review.model.dto.CommentsDto;
+import mk.ukim.finki.performance_review.model.dto.CommentsForTaskDto;
+import mk.ukim.finki.performance_review.model.projections.CommentProjection;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +29,6 @@ public interface CommentService {
     List<CommentsDto> showCommentsDto();
 
     List<Comment> listAll();
+
+    List<CommentsForTaskDto> findByCommentProjection(Long id);
 }

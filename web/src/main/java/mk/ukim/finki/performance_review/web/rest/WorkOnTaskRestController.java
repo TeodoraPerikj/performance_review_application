@@ -65,13 +65,22 @@ public class WorkOnTaskRestController {
     }
 
     @PostMapping("/{id}/leaveComment")
-    public ResponseEntity<Comment> addComment2(@PathVariable Long id, @RequestParam String comment, HttpServletRequest request){
-
-        String username = request.getRemoteUser();
+    public ResponseEntity<Comment> addComment2(@PathVariable Long id, @RequestParam String username,
+                                               @RequestParam String comment){
 
         return this.commentService.create(username, id, comment)
                 .map(comment1 -> ResponseEntity.ok().body(comment1))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
+
+//    @PostMapping("/{id}/leaveComment")
+//    public ResponseEntity<Comment> addComment2(@PathVariable Long id, @RequestParam String comment, HttpServletRequest request){
+//
+//        String username = request.getRemoteUser();
+//
+//        return this.commentService.create(username, id, comment)
+//                .map(comment1 -> ResponseEntity.ok().body(comment1))
+//                .orElseGet(() -> ResponseEntity.badRequest().build());
+//    }
 
 }

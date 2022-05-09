@@ -25,17 +25,21 @@ const header = (params) => {
                             {/*<Link className="nav-link" to={"/tasks"}>Tasks</Link>*/}
                             <a className={"text-decoration-none text-secondary me-2"} href={"/tasks"}>Tasks</a>
                         </li>
+                        {/*<li className="nav-item active">*/}
+                        {/*    /!*<Link className="nav-link" to={"/users"}>Users</Link>*!/*/}
+                        {/*    <a className={"text-decoration-none text-secondary me-2"} href={"/users"}>Users</a>*/}
+                        {/*</li>*/}
+                        {/*<li className="nav-item active">*/}
+                        {/*    /!*<Link className={"nav-link"} to={"/comments"}>Comments</Link>*!/*/}
+                        {/*    <a className={"text-decoration-none text-secondary me-2"} href={"/comments"}>Comments</a>*/}
+                        {/*</li>*/}
                         <li className="nav-item active">
-                            {/*<Link className="nav-link" to={"/users"}>Users</Link>*/}
-                            <a className={"text-decoration-none text-secondary me-2"} href={"/users"}>Users</a>
+                            {/*<Link className={"nav-link"} to={"/comments"}>Comments</Link>*/}
+                            <a className={"text-decoration-none text-secondary me-2"} href={"/selectUser"}>My Tasks</a>
                         </li>
                         <li className="nav-item active">
                             {/*<Link className={"nav-link"} to={"/comments"}>Comments</Link>*/}
-                            <a className={"text-decoration-none text-secondary me-2"} href={"/comments"}>Comments</a>
-                        </li>
-                        <li className="nav-item active">
-                            {/*<Link className={"nav-link"} to={"/comments"}>Comments</Link>*/}
-                            <a className={"text-decoration-none text-secondary me-2"} href={"/myTasks"}>My Tasks</a>
+                            <a className={"text-decoration-none text-secondary me-2"} href={"/selectParameters"}>Show Performance</a>
                         </li>
                     </ul>
                     <form className="form-inline mt-2 mt-md-0 ml-3">

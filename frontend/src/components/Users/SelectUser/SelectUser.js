@@ -1,8 +1,9 @@
 import React from 'react';
 import {useHistory} from "react-router-dom";
+import PerformanceReviewRepository from "../../../repository/performanceReviewRepository";
 
 const SelectUser = (props) => {
-    debugger;
+
     const history = useHistory();
 
     const [formData, updateFormData] = React.useState({
@@ -21,9 +22,17 @@ const SelectUser = (props) => {
         e.preventDefault();
 
         const username = formData.username;
+        console.log(username)
 
-        props.onSelect(username);
-        history.push("/myTasks");
+        window.open(`/myTasks/${username}`, "_self")
+
+        // PerformanceReviewRepository.getUserByUsername(username)
+        //     .then((data) => {
+        //         window.open(`/myTasks/${username}`, "_self")
+        //     })
+
+        // props.onSelect(username);
+        // history.push("/myTasks");
     }
 
     return (

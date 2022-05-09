@@ -1,5 +1,6 @@
 import React from 'react';
 import {useHistory} from "react-router-dom";
+import PerformanceReviewRepository from "../../../repository/performanceReviewRepository";
 
 const TaskAdd = (props) => {
 
@@ -13,7 +14,8 @@ const TaskAdd = (props) => {
         startDate: "",
         dueDate: "",
         estimationDays: "",
-        assignees: ""
+        assignees: "",
+        creator: ""
 
     });
 
@@ -25,8 +27,9 @@ const TaskAdd = (props) => {
     }
 
     const onFormSubmit = (e) => {
-        debugger;
         e.preventDefault();
+
+        debugger;
 
         const title = formData.title;
         const description = formData.description;
@@ -34,9 +37,14 @@ const TaskAdd = (props) => {
         const dueDate = formData.dueDate;
         const estimationDays = formData.estimationDays;
         const assignees = formData.assignees;
+        const creator = formData.creator;
 
-        props.onAddTask(title, description, startDate, dueDate, estimationDays, assignees);
-        history.push("/tasks");
+        //props.onAddTask(title, description, startDate, dueDate, estimationDays, assignees, creator);
+
+        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignees, creator)
+            .then(() => {
+                window.open("/tasks","_self")
+            })
     }
 
     return (
@@ -95,6 +103,15 @@ const TaskAdd = (props) => {
                                    onChange={handleChange}/>
                         </div>
                         <div className="form-group">
+                            <label htmlFor="creator">Creator</label>
+                            <select name="creator" className="form-control" onChange={handleChange}>
+                                {props.users.map((term) =>
+                                    <option value={term.username}>{term.username}</option>
+                                )}
+
+                            </select>
+                        </div>
+                        <div className="form-group">
                             <label>Choose Assignees</label>
                             <select name="assignees" multiple
                                     className="form-control" onChange={handleChange}>
@@ -109,7 +126,7 @@ const TaskAdd = (props) => {
 
                             </select>
                         </div>
-
+                        {/*/!*href={"/tasks"} onClick={onFormSubmit}*!/*/}
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
                 </div>

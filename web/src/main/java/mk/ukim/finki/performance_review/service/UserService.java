@@ -40,7 +40,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> findAssignedUsers(String assignees);
 
-    Optional<UserPerformanceDto> showUserPerformance(String chosenUsername, String type,
+    Optional<UserPerformanceDto> showUserPerformance(String chosenUsername, String chosenType,
                                                      String dateFrom, String dateTo);
 
     Optional<UserTasksDto> showUserTasks(String username);

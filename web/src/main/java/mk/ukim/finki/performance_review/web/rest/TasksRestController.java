@@ -3,14 +3,15 @@ package mk.ukim.finki.performance_review.web.rest;
 import mk.ukim.finki.performance_review.model.Task;
 import mk.ukim.finki.performance_review.model.User;
 import mk.ukim.finki.performance_review.model.dto.CopyOfTaskDto;
+import mk.ukim.finki.performance_review.model.dto.EachTaskDto;
 import mk.ukim.finki.performance_review.model.dto.TaskDto;
 import mk.ukim.finki.performance_review.service.TaskService;
 import mk.ukim.finki.performance_review.service.UserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,14 +30,25 @@ public class TasksRestController {
     }
 
     @GetMapping(value = {"/api", "/api/tasks"})
-    public List<Task> getAllTasks(){
-        return this.taskService.listAll();
+    public List<EachTaskDto> getAllTasks(){
+        return this.taskService.findEachTask();
     }
+
+//    @GetMapping(value = {"/api", "/api/tasks"})
+//    public List<Task> getAllTasks(){
+//        return this.taskService.listAll();
+//    }
 
 //    @GetMapping(value = {"/api/","/api/tasks"})
 //    public List<TasksDto> showTasks2(){
 //        return this.taskService.showTasksDto();
 //    }
+
+    @GetMapping("/api/tasks/pagination")
+    public List<EachTaskDto> findTasksByPage(Pageable pageable){
+        return this.taskService.findAllWithPagination(pageable).getContent();
+    }
+
 
     @GetMapping("/api/tasks/getById/{id}")
     public Optional<CopyOfTaskDto> getById(@PathVariable Long id){
@@ -70,7 +82,7 @@ public class TasksRestController {
     }
 
     @PostMapping("/api/tasks/add")
-    public ResponseEntity<Task> addNewTask2(@RequestBody TaskDto taskDto, HttpServletRequest request){
+    public ResponseEntity<Task> addNewTask2(@RequestBody TaskDto taskDto){
         List<User> assignedUsers = this.userService.findAssignedUsers(taskDto.getAssignees());
 
         String title = taskDto.getTitle();
@@ -78,7 +90,7 @@ public class TasksRestController {
         String startDate = taskDto.getStartDate();
         String dueDate = taskDto.getDueDate();
         Integer days = Integer.valueOf(taskDto.getEstimationDays());
-        String username = request.getRemoteUser();
+        String username = taskDto.getCreator();
 
         return this.taskService.create(title, description, startDate, dueDate, days, username, assignedUsers)
                 .map(task -> ResponseEntity.ok().body(task))
