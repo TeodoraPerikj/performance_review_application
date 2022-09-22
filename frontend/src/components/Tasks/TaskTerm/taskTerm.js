@@ -4,7 +4,7 @@ const TaskTerm = (props) => {
 
     let commentItems;
 
-    if (props.term.comments.length === 0 || props.term.comments.length === 1) {
+    if (props.term.comments.length === 0) {
         commentItems = <tr>No Comments</tr>
     } else {
 
@@ -17,7 +17,7 @@ const TaskTerm = (props) => {
 
     let assigneesItems;
 
-    if (props.term.assignees.length === 0 || props.term.assignees.length === 1) {
+    if (props.term.assignees.length === 0) {
         assigneesItems = <tr>{props.term.assignees.toString()}</tr>
     } else {
 
@@ -36,7 +36,6 @@ const TaskTerm = (props) => {
             <td scope={"col"}>{props.term.title}</td>
             <td scope={"col"}>{props.term.description}</td>
             <td scope={"col"}>{props.term.creator}</td>
-            <td scope={"col"}>{props.term.status.toString()}</td>
             <td scope={"col"}>{dateToStart}</td>
             <td scope={"col"}>{dateToFinish}</td>
             <td scope={"col"}>{props.term.estimationDays}</td>

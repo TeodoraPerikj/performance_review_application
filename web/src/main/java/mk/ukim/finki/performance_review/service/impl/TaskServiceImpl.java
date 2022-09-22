@@ -104,6 +104,12 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
 
+        List<Comment> comments = this.commentService.listCommentsForATask(task.getId());
+
+        for(Comment comment : comments){
+            this.commentService.delete(comment.getId());
+        }
+
         this.taskRepository.delete(task);
     }
 

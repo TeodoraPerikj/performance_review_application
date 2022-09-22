@@ -15,7 +15,10 @@ const PerformanceReviewService = {
     },
 
     deleteTask: (id) => {
-        return axios.delete(`/tasks/delete/${id}`);
+        debugger
+        let task = axios.delete(`/tasks/delete/${id}`);
+
+        return task
     },
 
     addTask: (title, description, startDate, dueDate, estimationDays, assignees, creator) => {
@@ -100,7 +103,16 @@ const PerformanceReviewService = {
 
     changeComment: (id, editComment) => {
         return axios.put(`/editComment/${id}?editComment=${editComment}`);
+    },
+
+    finishTask: (id) => {
+        return axios.post(`/workOnTask/${id}/finishTask`);
+    },
+
+    cancelTask: (id) => {
+        return axios.post(`/workOnTask/${id}/cancelTask`);
     }
+
 }
 
 export default PerformanceReviewService;

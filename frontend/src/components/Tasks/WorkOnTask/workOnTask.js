@@ -84,13 +84,17 @@ const WorkOnTask = (props) => {
     const markAsDone = (e) => {
         e.preventDefault();
 
-        history.push(`/workOnTask/${id}/finishTask`)
+        PerformanceReviewRepository.finishTask(id).then(() => {
+            window.open("/tasks","_self")
+        })
     }
 
     const cancelTask = (e) => {
         e.preventDefault();
 
-        history.push(`/workOnTask/${id}/cancelTask`)
+        PerformanceReviewRepository.cancelTask(id).then(() => {
+            window.open("/tasks","_self")
+        })
     }
 
     let items;
@@ -104,7 +108,7 @@ const WorkOnTask = (props) => {
     }
 
 
-    if (formData.comments.length === 0 || formData.comments.length === 1) {
+    if (formData.comments.length === 0) {
         commentItems = <tr>{formData.comments.toString()}</tr>
     } else {
 
@@ -249,18 +253,20 @@ const WorkOnTask = (props) => {
                             </form>
                         </div>
 
-                        <form onSubmit={markAsDone}>
+                        <div className={'row'}>
+                                <form onSubmit={markAsDone}>
 
-                            <a href={'/tasks'} type="submit">Mark As Done</a>
+                                    <button onClick={`/workOnTask/${id}`} type="submit">Mark As Done</button>
 
-                        </form>
+                                </form>
 
-                        <form onSubmit={cancelTask}>
+                                <form onSubmit={cancelTask}>
 
-                            <a href={'/tasks'} type="submit">Cancel Task</a>
+                                    <button onClick={`/workOnTask/${id}`} type="submit">Cancel Task </button>
 
-                        </form>
+                                </form>
 
+                        </div>
                     </div>
                 </div>
             </div>

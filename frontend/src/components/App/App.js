@@ -175,6 +175,13 @@ class App extends Component {
                 this.loadComments()
             })
     }
+
+    finishTask = (id) => {
+        PerformanceReviewRepository.finishTask(id)
+            .then(() => {
+                this.loadTasks()
+            })
+    }
 }
 
 export default App;

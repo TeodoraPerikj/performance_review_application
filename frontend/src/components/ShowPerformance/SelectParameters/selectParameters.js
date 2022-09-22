@@ -75,7 +75,7 @@ return (
             <label htmlFor="dateTo">Date To</label>
             <input id="dateTo" name="dateTo" type="date" onChange={handleChange}/>
 
-            <button type="submit">Submit</button>
+            <button type="submit" className={"btn btn-success"}>Submit</button>
 
         </form>
 

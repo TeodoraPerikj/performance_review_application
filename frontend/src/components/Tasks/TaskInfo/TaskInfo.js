@@ -73,20 +73,21 @@ const TaskInfo = (props) => {
         button = <button onClick={formData.href} disabled>
             Start Task
         </button>
-    } else if (formData.textAndType === 'Start task') {
+    } else if (formData.textAndType === 'Start Task') {
+        debugger
         formData.href = `/workOnTask/${id}`;
         button = <form onSubmit={formStartTask}>
-            <a href={formData.href}>{formData.textAndType}</a>
+            <a className={'btn btn-primary'} href={`/workOnTask/${id}`}>{'Start task'}</a>
         </form>
     } else if (formData.textAndType === 'Join Task') {
         formData.href = `/workOnTask/${id}`;
         button = <form onSubmit={formJoinTask}>
-            <a href={formData.href}>{formData.textAndType}</a>
+            <a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a>
         </form>
     } else if (formData.textAndType === 'Continue Task') {
         formData.href = `/workOnTask/${id}`;
         button = <form onSubmit={formStartTask}>
-            <a href={formData.href}>{formData.textAndType}</a>
+            <a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a>
         </form>
     } else if (formData.textAndType === 'Finished') {
         formData.href = `/workOnTask/${id}`;
@@ -102,7 +103,8 @@ const TaskInfo = (props) => {
 
     let items;
 
-    if (formData.assignees.length === 1 || formData.assignees.length === 0) {
+    if (formData.assignees.length === 0) {
+       // formData.assignees.length === 1
         items = <li>{formData.assignees}</li>;
     } else {
         items = formData.assignees.map((user) => {

@@ -75,7 +75,6 @@ class Tasks extends React.Component{
                                 <th className={"fs-6"} scope={"col"}>Task Title</th>
                                 <th className={"fs-6"} scope={"col"}>Description</th>
                                 <th className={"fs-6"} scope={"col"}>Creator</th>
-                                <th className={"fs-6"} scope={"col"}>Status</th>
                                 <th className={"fs-6"} scope={"col"}>Start Date</th>
                                 <th className={"fs-6"} scope={"col"}>Due Date</th>
                                 <th className={"fs-6"} scope={"col"}>Estimation Days</th>
@@ -93,7 +92,7 @@ class Tasks extends React.Component{
                     <div className={"col mb-3"}>
                         <div className={"row"}>
                             <div className={"col-sm-12 col-md-12"}>
-                                <a href={"/tasks/add"}>Add Task</a>
+                                <a href={"/tasks/add"} className={"btn btn-success"}>Add Task</a>
                             </div>
                         </div>
                     </div>

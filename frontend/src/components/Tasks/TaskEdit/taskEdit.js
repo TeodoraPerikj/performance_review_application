@@ -131,6 +131,8 @@ const TaskEdit = (props) => {
 
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
+
+                    <a href={'/tasks'} className={"btn btn-danger"}>Back</a>
                 </div>
             </div>
         </div>

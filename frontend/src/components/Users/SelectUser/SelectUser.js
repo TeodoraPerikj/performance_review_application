@@ -56,8 +56,9 @@ const SelectUser = (props) => {
                             </select>
                         </div>
 
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-success">Submit</button>
                     </form>
+                    <a href={'/tasks'} className={"btn btn-primary"}>Back</a>
                 </div>
             </div>
         </div>
