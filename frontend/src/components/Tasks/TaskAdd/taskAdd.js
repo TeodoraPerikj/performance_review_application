@@ -14,7 +14,7 @@ const TaskAdd = (props) => {
         startDate: "",
         dueDate: "",
         estimationDays: "",
-        assignees: "",
+        assignee: "",
         creator: ""
 
     });
@@ -36,12 +36,14 @@ const TaskAdd = (props) => {
         const startDate = formData.startDate;
         const dueDate = formData.dueDate;
         const estimationDays = formData.estimationDays;
-        const assignees = formData.assignees;
+        // const assignees = formData.assignees;
+        const assignee = formData.assignee;
         const creator = formData.creator;
+        //const creator = "USER";
 
         //props.onAddTask(title, description, startDate, dueDate, estimationDays, assignees, creator);
 
-        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignees, creator)
+        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignee, creator)
             .then(() => {
                 window.open("/tasks","_self")
             })
@@ -113,7 +115,7 @@ const TaskAdd = (props) => {
                         </div>
                         <div className="form-group">
                             <label>Choose Assignees</label>
-                            <select name="assignees" multiple
+                            <select name="assignee" multiple
                                     className="form-control" onChange={handleChange}>
                                 {/*<option th:each="user : ${users}"*/}
                                 {/*        th:value="${user?.getUsername()}"*/}

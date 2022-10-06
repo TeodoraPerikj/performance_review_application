@@ -16,6 +16,7 @@ import WorkOnTask from "../Tasks/WorkOnTask/workOnTask";
 import SelectParameters from "../ShowPerformance/SelectParameters/selectParameters";
 import UserPerformance from "../ShowPerformance/UserPerformance/userPerformance";
 import CommentEdit from "../Comments/CommentEdit/commentEdit";
+import RegisterUser from "../Users/RegisterUser/RegisterUser";
 
 class App extends Component {
 
@@ -53,6 +54,8 @@ class App extends Component {
                                        onEdit={this.getTaskById} onViewTask={this.viewTask}/>}/>
                             <Route path={"/users"} exact render={() =>
                                 <Users users={this.state.users}/>}/>
+                            <Route path={"/register"} exact render={() =>
+                                <RegisterUser/>}/>
                             <Route path={"/comments"} exact render={() =>
                                 <Comments comments={this.state.comments}/>}/>
                             <Route path={"/selectParameters"} exact render={() =>
@@ -84,6 +87,7 @@ class App extends Component {
     loadTasks = () => {
         PerformanceReviewRepository.fetchTasks()
             .then((data) => {
+                console.log(data.data)
                 this.setState({
                     tasks: data.data
                 })

@@ -4,6 +4,8 @@ import PerformanceReviewRepository from "../../../repository/performanceReviewRe
 
 const TaskEdit = (props) => {
 
+    // CHANGED TO ASSIGNEE
+
     const history = useHistory();
     const {id} = useParams();
 
@@ -13,7 +15,7 @@ const TaskEdit = (props) => {
         startDate: "",
         dueDate: "",
         estimationDays: "",
-        assignees: "",
+        assignee: "",
         creator: ""
 
     });
@@ -28,7 +30,7 @@ const TaskEdit = (props) => {
                     startDate: data.data.startDate,
                     dueDate: data.data.dueDate,
                     estimationDays: data.data.estimationDays,
-                    assignees: data.data.assignees
+                    assignee: data.data.assignee
                 })
             }).catch((error) =>{
                 console.log(error)
@@ -52,10 +54,11 @@ const TaskEdit = (props) => {
         const startDate = formData.startDate !== "" ? formData.startDate : props.task.startDate;
         const dueDate = formData.dueDate !== "" ? formData.dueDate : props.task.dueDate;
         const estimationDays = formData.estimationDays !== "" ? formData.estimationDays : props.task.estimationDays;
-        const assignees = formData.assignees !== "" ? formData.assignees : props.task.assignees;
+        // const assignees = formData.assignees !== "" ? formData.assignees : props.task.assignees;
+        const assignee = formData.assignee !== "" ? formData.assignee : props.task.assignee;
         const creator = formData.creator;
 
-        PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignees, creator)
+        PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignee, creator)
             .then(() => {
                 // history.push("/tasks")
                 window.open("/tasks","_self")
@@ -115,7 +118,7 @@ const TaskEdit = (props) => {
                         </div>
                         <div className="form-group">
                             <label>Choose Assignees</label>
-                            <select name="assignees" multiple="multiple"
+                            <select name="assignee" multiple="multiple"
                                     className="form-control" onChange={handleChange}>
                                 {/*<option th:each="user : ${users}"*/}
                                 {/*        th:value="${user?.getUsername()}"*/}

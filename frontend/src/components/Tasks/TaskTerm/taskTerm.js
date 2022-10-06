@@ -2,31 +2,31 @@ import React from 'react';
 
 const TaskTerm = (props) => {
 
-    let commentItems;
+    // let commentItems;
+    //
+    // if (props.term.comments.length === 0) {
+    //     commentItems = <tr>No Comments</tr>
+    // } else {
+    //
+    //     commentItems = props.term.comments.map((findComment) => {
+    //         return <tr>
+    //             <td>{findComment.comment}</td>
+    //         </tr>
+    //     })
+    // }
 
-    if (props.term.comments.length === 0) {
-        commentItems = <tr>No Comments</tr>
-    } else {
-
-        commentItems = props.term.comments.map((findComment) => {
-            return <tr>
-                <td>{findComment.comment}</td>
-            </tr>
-        })
-    }
-
-    let assigneesItems;
-
-    if (props.term.assignees.length === 0) {
-        assigneesItems = <tr>{props.term.assignees.toString()}</tr>
-    } else {
-
-        assigneesItems = props.term.assignees.map((assignee) => {
-            return <tr>
-                <td>{assignee}</td>
-            </tr>
-        })
-    }
+    // let assigneesItems;
+    //
+    // if (props.term.assignees.length === 0) {
+    //     assigneesItems = <tr>{props.term.assignees.toString()}</tr>
+    // } else {
+    //
+    //     assigneesItems = props.term.assignees.map((assignee) => {
+    //         return <tr>
+    //             <td>{assignee}</td>
+    //         </tr>
+    //     })
+    // }
 
     let dateToStart = props.term.startDate.replace("T", " ");
     let dateToFinish = props.term.dueDate.replace("T", " ");
@@ -40,8 +40,8 @@ const TaskTerm = (props) => {
             <td scope={"col"}>{dateToFinish}</td>
             <td scope={"col"}>{props.term.estimationDays}</td>
             <td scope={"col"}>{props.term.status}</td>
-            <td scope={"col"}>{assigneesItems}</td>
-            <td scope={"col"}>{commentItems}</td>
+            <td scope={"col"}>{props.term.assignee}</td>
+            {/*<td scope={"col"}>{commentItems}</td>*/}
             <td scope={"col"}>
                 <a title={"Edit"} className={"btn btn-primary"}
                    href={`/tasks/edit/${props.term.id}`}>

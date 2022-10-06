@@ -22,6 +22,7 @@ const SelectUser = (props) => {
         e.preventDefault();
 
         const username = formData.username;
+        //const username = "user1";
         console.log(username)
 
         window.open(`/myTasks/${username}`, "_self")

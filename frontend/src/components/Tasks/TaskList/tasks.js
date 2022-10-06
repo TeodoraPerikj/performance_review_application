@@ -80,7 +80,7 @@ class Tasks extends React.Component{
                                 <th className={"fs-6"} scope={"col"}>Estimation Days</th>
                                 <th className={"fs-6"} scope={"col"}>Status</th>
                                 <th className={"fs-6"} scope={"col"}>Assignees</th>
-                                <th className={"fs-6"} scope={"col"}>Comments</th>
+                                {/*<th className={"fs-6"} scope={"col"}>Comments</th>*/}
                                 <th className={"fs-6"} scope={"col"}>Actions</th>
                             </tr>
                             </thead>

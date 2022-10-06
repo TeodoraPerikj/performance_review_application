@@ -15,13 +15,14 @@ const WorkOnTask = (props) => {
         dueDate: "",
         estimationDays: "",
         status: "",
-        assignees: "",
+        assignee: "",
         comments: "",
         comment: ""
     });
 
     useEffect(() => {
 
+        debugger;
         PerformanceReviewRepository.workOnTask(id)
             .then((data) => {
                 updateFormData({
@@ -31,7 +32,7 @@ const WorkOnTask = (props) => {
                     dueDate: data.data.task.dueDate,
                     estimationDays: data.data.task.estimationDays,
                     status: data.data.task.status,
-                    assignees: data.data.assignedUsers,
+                    assignee: data.data.assignee,
                     comments: data.data.comments
                 })
             }).catch((error) => {
@@ -54,7 +55,7 @@ const WorkOnTask = (props) => {
         const comment = formData.comment;
         console.log(formData.comments)
 
-        PerformanceReviewRepository.leaveComment(id, 'user2', comment)
+        PerformanceReviewRepository.leaveComment(id, 'user1', comment)
             .then(() => {
 
                 const newList = formData.comments.concat(comment)
@@ -97,40 +98,40 @@ const WorkOnTask = (props) => {
         })
     }
 
-    let items;
+    // let items;
+    //
+    // if (formData.assignees.length === 0 || formData.assignees.length === 1) {
+    //     items = <li>{formData.assignees}</li>;
+    // } else {
+    //     items = formData.assignees.map((user) => {
+    //         return <li>{user}</li>;
+    //     })
+    // }
 
-    if (formData.assignees.length === 0 || formData.assignees.length === 1) {
-        items = <li>{formData.assignees}</li>;
-    } else {
-        items = formData.assignees.map((user) => {
-            return <li>{user}</li>;
-        })
-    }
 
-
-    if (formData.comments.length === 0) {
-        commentItems = <tr>{formData.comments.toString()}</tr>
-    } else {
-
-        commentItems = formData.comments.map((findComment) => {
-            return <tr>
-                <td>{findComment.username}</td>
-                <td>{findComment.dateTime}</td>
-                <td>{findComment.comment}</td>
-                <td> <a title={"Edit"} className={"btn btn-primary"}
-                        href={`/comments/edit/${findComment.id}?taskId=${id}&comment=${findComment.comment}`}>
-                    Edit
-                </a>
-                </td>
-                <td>
-                    <a title={"Delete"} className={"btn btn-danger"}
-                       onClick={() => props.onDeleteComment(findComment.id)}>
-                        Delete
-                    </a>
-                </td>
-            </tr>
-        })
-    }
+    // if (formData.comments.length === 0) {
+    //     commentItems = <tr>{formData.comments.toString()}</tr>
+    // } else {
+    //
+    //     commentItems = formData.comments.map((findComment) => {
+    //         return <tr>
+    //             <td>{findComment.username}</td>
+    //             <td>{findComment.dateTime}</td>
+    //             <td>{findComment.comment}</td>
+    //             <td> <a title={"Edit"} className={"btn btn-primary"}
+    //                     href={`/comments/edit/${findComment.id}?taskId=${id}&comment=${findComment.comment}`}>
+    //                 Edit
+    //             </a>
+    //             </td>
+    //             <td>
+    //                 <a title={"Delete"} className={"btn btn-danger"}
+    //                    onClick={() => props.onDeleteComment(findComment.id)}>
+    //                     Delete
+    //                 </a>
+    //             </td>
+    //         </tr>
+    //     })
+    // }
 
     return (
         <div className="container">
@@ -177,75 +178,76 @@ const WorkOnTask = (props) => {
                     <div className="form-group">
                         <label><b>Assignees:</b></label>
                         <ul>
-                            {items}
+                            {/*{items}*/}
+                            <li>{formData.assignee}</li>
                         </ul>
                     </div>
 
-                    <h2>Comments</h2>
-                    <div className="table-responsive">
-                        {/*    <table th:if="${workTask.getComments != null}">*/}
-                        {/*        <thead>*/}
-                        {/*        <tr>*/}
-                        {/*            <th>Created By</th>*/}
-                        {/*            <th>Date Created</th>*/}
-                        {/*            <th>Comment</th>*/}
-                        {/*        </tr>*/}
-                        {/*        </thead>*/}
-                        {/*        <tbody>*/}
+                    {/*<h2>Comments</h2>*/}
+                    {/*<div className="table-responsive">*/}
+                    {/*    /!*    <table th:if="${workTask.getComments != null}">*!/*/}
+                    {/*    /!*        <thead>*!/*/}
+                    {/*    /!*        <tr>*!/*/}
+                    {/*    /!*            <th>Created By</th>*!/*/}
+                    {/*    /!*            <th>Date Created</th>*!/*/}
+                    {/*    /!*            <th>Comment</th>*!/*/}
+                    {/*    /!*        </tr>*!/*/}
+                    {/*    /!*        </thead>*!/*/}
+                    {/*    /!*        <tbody>*!/*/}
 
-                        {/*        <tr th:each="comment : ${commentsForTask}">*/}
+                    {/*    /!*        <tr th:each="comment : ${commentsForTask}">*!/*/}
 
-                        {/*            <td th:text="${comment.getUser().getUsername()}"></td>*/}
-                        {/*            <td th:text="${#temporals.format(comment.getDateTime(), 'dd-MM-yyyy HH:mm')}"></td>*/}
-                        {/*            <td th:text="${comment.getComment()}">*/}
+                    {/*    /!*            <td th:text="${comment.getUser().getUsername()}"></td>*!/*/}
+                    {/*    /!*            <td th:text="${#temporals.format(comment.getDateTime(), 'dd-MM-yyyy HH:mm')}"></td>*!/*/}
+                    {/*    /!*            <td th:text="${comment.getComment()}">*!/*/}
 
-                        {/*                <td className="text-right">*/}
-                        {/*                    <!--                        th:if="${comment.getUser().getUsername().equals(session.user.getUsername())}"-->*/}
-                        {/*                    <form*/}
-                        {/*                        th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"*/}
-                        {/*                        th:action="@{/workOnTask/{id}/deleteComment (id=${comment.getId()})}"*/}
-                        {/*                        th:method="POST">*/}
+                    {/*    /!*                <td className="text-right">*!/*/}
+                    {/*    /!*                    <!--                        th:if="${comment.getUser().getUsername().equals(session.user.getUsername())}"-->*!/*/}
+                    {/*    /!*                    <form*!/*/}
+                    {/*    /!*                        th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"*!/*/}
+                    {/*    /!*                        th:action="@{/workOnTask/{id}/deleteComment (id=${comment.getId()})}"*!/*/}
+                    {/*    /!*                        th:method="POST">*!/*/}
 
-                        {/*                        <button type="submit" className="btn btn-sm btn-danger"><i*/}
-                        {/*                            className="fa fa-trash">Delete</i>*/}
-                        {/*                        </button>*/}
+                    {/*    /!*                        <button type="submit" className="btn btn-sm btn-danger"><i*!/*/}
+                    {/*    /!*                            className="fa fa-trash">Delete</i>*!/*/}
+                    {/*    /!*                        </button>*!/*/}
 
-                        {/*                    </form>*/}
+                    {/*    /!*                    </form>*!/*/}
 
-                        {/*                    <a th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"*/}
-                        {/*                       th:href="@{/editComment/{id} (id=${comment.getId()})}"*/}
-                        {/*                       className="btn btn-sm btn-info"><i className="fa fa-trash">Edit</i></a>*/}
-                        {/*                </td>*/}
-                        {/*        </tr>*/}
-                        {/*        </tbody>*/}
-                        {/*    </table>*/}
-                        {/*</div>*/}
+                    {/*    /!*                    <a th:if="${comment.getUser().getUsername().equals(#request.getRemoteUser())}"*!/*/}
+                    {/*    /!*                       th:href="@{/editComment/{id} (id=${comment.getId()})}"*!/*/}
+                    {/*    /!*                       className="btn btn-sm btn-info"><i className="fa fa-trash">Edit</i></a>*!/*/}
+                    {/*    /!*                </td>*!/*/}
+                    {/*    /!*        </tr>*!/*/}
+                    {/*    /!*        </tbody>*!/*/}
+                    {/*    /!*    </table>*!/*/}
+                    {/*    /!*</div>*!/*/}
 
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Created By</th>
-                                <th>Date Created</th>
-                                <th>Comment</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {commentItems}
-                            </tbody>
-                        </table>
-                    </div>
+                    {/*    <table>*/}
+                    {/*        <thead>*/}
+                    {/*        <tr>*/}
+                    {/*            <th>Created By</th>*/}
+                    {/*            <th>Date Created</th>*/}
+                    {/*            <th>Comment</th>*/}
+                    {/*        </tr>*/}
+                    {/*        </thead>*/}
+                    {/*        <tbody>*/}
+                    {/*            {commentItems}*/}
+                    {/*        </tbody>*/}
+                    {/*    </table>*/}
+                    {/*</div>*/}
 
-                    <div>
-                        <div className="form-group">
-                            <form onSubmit={leaveComment}>
+                    {/*<div>*/}
+                    {/*    <div className="form-group">*/}
+                    {/*        <form onSubmit={leaveComment}>*/}
 
-                                <label htmlFor="comment"><b>Add Comment</b></label>
-                                <input id="comment" name="comment" onChange={handleChange}
-                                       required placeholder="Leave a comment"/>
-                                <button onClick={`/workOnTask/${id}`}>Leave a Comment</button>
-                                {/*<a href={`/workOnTask/${id}`}>Leave a Comment</a>*/}
-                            </form>
-                        </div>
+                    {/*            <label htmlFor="comment"><b>Add Comment</b></label>*/}
+                    {/*            <input id="comment" name="comment" onChange={handleChange}*/}
+                    {/*                   required placeholder="Leave a comment"/>*/}
+                    {/*            <button onClick={`/workOnTask/${id}`}>Leave a Comment</button>*/}
+                    {/*            /!*<a href={`/workOnTask/${id}`}>Leave a Comment</a>*!/*/}
+                    {/*        </form>*/}
+                    {/*    </div>*/}
 
                         <div className={'row'}>
                             <form onSubmit={onFormSubmit}>
@@ -262,14 +264,14 @@ const WorkOnTask = (props) => {
 
                                 <form onSubmit={cancelTask}>
 
-                                    <button onClick={`/workOnTask/${id}`} type="submit">Cancel Task </button>
+                                    <button onClick={`/workOnTask/${id}`} type="submit">Cancel Task</button>
 
                                 </form>
 
                         </div>
                     </div>
                 </div>
-            </div>
+            {/*</div>*/}
         </div>
     );
 }

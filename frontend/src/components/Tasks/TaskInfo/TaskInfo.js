@@ -14,7 +14,7 @@ const TaskInfo = (props) => {
         dueDate: "",
         estimationDays: "",
         status: "",
-        assignees: "",
+        assignee: "",
         textAndType: "",
         href: "",
     });
@@ -31,7 +31,8 @@ const TaskInfo = (props) => {
                     dueDate: data.data.task.dueDate,
                     estimationDays: data.data.task.estimationDays,
                     status: data.data.task.status,
-                    assignees: data.data.assignedUsers,
+                    //assignee: data.data.assignedUsers,
+                    assignee: data.data.assignee,
                     textAndType: data.data.textAndType
                 })
             }).catch((error) => {
@@ -55,7 +56,7 @@ const TaskInfo = (props) => {
     const formJoinTask = (e) => {
         e.preventDefault();
 
-        formData.assignees += 'user2';
+        formData.assignees += 'user1';
 
         history.push(`/workOnTask/${id}`)
     }
@@ -103,14 +104,14 @@ const TaskInfo = (props) => {
 
     let items;
 
-    if (formData.assignees.length === 0) {
-       // formData.assignees.length === 1
-        items = <li>{formData.assignees}</li>;
-    } else {
-        items = formData.assignees.map((user) => {
-            return <li>{user}</li>;
-        })
-    }
+    // if (formData.assignees.length === 0) {
+    //    // formData.assignees.length === 1
+    //     items = <li>{formData.assignees}</li>;
+    // } else {
+    //     items = formData.assignees.map((user) => {
+    //         return <li>{user}</li>;
+    //     })
+    // }
 
     return (
 
@@ -159,7 +160,8 @@ const TaskInfo = (props) => {
                     <div className="form-group">
                         <label><b>Assignees:</b></label>
                         <ul>
-                            {items}
+                            {/*{items}*/}
+                            <li>{formData.assignee}</li>
                         </ul>
                     </div>
 
