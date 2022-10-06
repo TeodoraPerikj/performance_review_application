@@ -1,57 +1,62 @@
 import axios from '../custom-axios/axios';
+import tasks_axios from '../custom-axios/tasks_axios';
+import users_axios from '../custom-axios/users_axios';
+import comments_axios from '../custom-axios/comments_axios';
 
 const PerformanceReviewService = {
 
     fetchTasks: () => {
-        return axios.get("/tasks");
+        debugger
+        var tasks =  tasks_axios.get("/tasks");
+        console.log(tasks)
+        return tasks;
     },
 
     fetchUsers: () => {
-        return axios.get("/myTasks/showUsersDto");
+        return users_axios.get("/showUsersDto");
     },
 
     fetchComments: () => {
-        return axios.get("/comments");
+        return comments_axios.get("/comments");
     },
 
     deleteTask: (id) => {
-        debugger
-        let task = axios.delete(`/tasks/delete/${id}`);
-
-        return task
+        return tasks_axios.delete(`/tasks/delete/${id}`);
     },
 
-    addTask: (title, description, startDate, dueDate, estimationDays, assignees, creator) => {
-        return axios.post("/tasks/add" , {
+    addTask: (title, description, startDate, dueDate, estimationDays, assignee, creator) => {
+        return tasks_axios.post("/tasks/add" , {
             "title" : title,
             "description" : description,
             "startDate" : startDate,
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
-            "assignees" : assignees,
+            "assignee" : assignee,
+            //////                 ASSIGNEE
             "creator" : creator
         });
     },
 
-    editTask: (id,title, description, startDate, dueDate, estimationDays, assignees, creator) => {
+    editTask: (id,title, description, startDate, dueDate, estimationDays, assignee, creator) => {
         debugger;
-        return axios.put(`/tasks/add/${id}`,{
+        return tasks_axios.put(`/tasks/add/${id}`,{
             "title" : title,
             "description" : description,
             "startDate" : startDate,
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
-            "assignees" : assignees,
+           // "assignees" : assignees,
+            "assignee": assignee,
             "creator" : creator
         });
     },
 
     getTask: (id) => {
-        return axios.get(`/tasks/edit-task/${id}`);
+        return tasks_axios.get(`/tasks/edit-task/${id}`);
     },
 
     login: (username, password) => {
-        return axios.post("/login", {
+        return users_axios.post("/login", {
             "username" : username,
             "password" : password
         })
@@ -59,21 +64,21 @@ const PerformanceReviewService = {
 
     getUserByUsername: (username) => {
 
-        return axios.get(`/findUser?username=${username}`);
+        return users_axios.get(`/findUser?username=${username}`);
     },
 
     viewTask: (id) => {
-
-        return axios.get(`/taskInfo/${id}?username=user2`);
+/////////////////// user2
+        return tasks_axios.get(`/taskInfo/${id}?username=user1`);
     },
 
     workOnTask: (id) => {
-        return axios.get(`/workOnTask/${id}`);
+        return tasks_axios.get(`/workOnTask/${id}`);
     },
 
     leaveComment: (id, username, comment) => {
         debugger;
-        return axios.post(`/workOnTask/${id}/leaveComment?username=${username}&comment=${comment}`)
+        return comments_axios.post(`/comments/${id}/leaveComment?username=${username}&comment=${comment}`)
     },
 
     showUserPerformance: (chosenUsername, chosenType, dateFrom, dateTo) => {
@@ -83,7 +88,7 @@ const PerformanceReviewService = {
         console.log(dateFrom)
         console.log(dateTo)
 
-        return axios.get(`/showUserPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`)
+        return users_axios.get(`/showUserPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`)
 
         // return axios.get("/showUserPerformance", {
         //     "chosenUsername": chosenUsername,
@@ -94,23 +99,33 @@ const PerformanceReviewService = {
     },
 
     deleteComment: (id) => {
-        return axios.delete(`/workOnTask/${id}/deleteComment`);
+        return comments_axios.delete(`/comments/${id}/deleteComment`);
     },
 
     getComment: (id) => {
-        return axios.get(`/editComment/${id}`);
+        return comments_axios.get(`/editComment/${id}`);
     },
 
     changeComment: (id, editComment) => {
-        return axios.put(`/editComment/${id}?editComment=${editComment}`);
+        return comments_axios.put(`/editComment/${id}?editComment=${editComment}`);
     },
 
     finishTask: (id) => {
-        return axios.post(`/workOnTask/${id}/finishTask`);
+        return tasks_axios.post(`/workOnTask/${id}/finishTask`);
     },
 
     cancelTask: (id) => {
-        return axios.post(`/workOnTask/${id}/cancelTask`);
+        return tasks_axios.post(`/workOnTask/${id}/cancelTask`);
+    },
+
+    registerUser: (name, surname, username, password, repeatedPassword) => {
+        return users_axios.post("/register", {
+            "name": name,
+            "surname": surname,
+            "username": username,
+            "password": password,
+            "repeatedPassword": repeatedPassword
+        })
     }
 
 }
