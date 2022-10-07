@@ -42,6 +42,7 @@ const TaskTerm = (props) => {
             <td scope={"col"}>{props.term.status}</td>
             <td scope={"col"}>{props.term.assignee}</td>
             {/*<td scope={"col"}>{commentItems}</td>*/}
+            <td scope={"col"}>{props.term.comment}</td>
             <td scope={"col"}>
                 <a title={"Edit"} className={"btn btn-primary"}
                    href={`/tasks/edit/${props.term.id}`}>

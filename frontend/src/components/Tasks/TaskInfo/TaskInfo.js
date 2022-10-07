@@ -56,7 +56,8 @@ const TaskInfo = (props) => {
     const formJoinTask = (e) => {
         e.preventDefault();
 
-        formData.assignees += 'user1';
+        //formData.assignees += 'user1';
+        formData.assignee += 'user1';
 
         history.push(`/workOnTask/${id}`)
     }

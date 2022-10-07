@@ -16,8 +16,12 @@ const WorkOnTask = (props) => {
         estimationDays: "",
         status: "",
         assignee: "",
-        comments: "",
-        comment: ""
+        //comments: "",
+        comment: "",
+        newComment: "",
+        dateTime: "",
+        commentUser: "",
+        commentId: ""
     });
 
     useEffect(() => {
@@ -33,7 +37,10 @@ const WorkOnTask = (props) => {
                     estimationDays: data.data.task.estimationDays,
                     status: data.data.task.status,
                     assignee: data.data.assignee,
-                    comments: data.data.comments
+                    comment: data.data.comment,
+                    dateTime: data.data.dateTime,
+                    commentUser: data.data.commentUser,
+                    commentId: data.data.commentId
                 })
             }).catch((error) => {
             console.log(error)
@@ -52,16 +59,21 @@ const WorkOnTask = (props) => {
     const leaveComment = (e) => {
         e.preventDefault();
         debugger;
-        const comment = formData.comment;
-        console.log(formData.comments)
 
-        PerformanceReviewRepository.leaveComment(id, 'user1', comment)
+        ///// it is comment, but for now is newComment
+
+        const newComment = formData.newComment;
+        console.log(formData.comment)
+
+        PerformanceReviewRepository.leaveComment(id, 'user1', newComment)
             .then(() => {
 
-                const newList = formData.comments.concat(comment)
-                console.log(newList)
+                // const newList = formData.comments.concat(comment)
+                // console.log(newList)
+                //
+                // formData.comments = newList;
 
-                formData.comments = newList;
+                formData.comment = newComment
 
                 window.open(`/workOnTask/${id}`,"_self")
 
@@ -132,6 +144,32 @@ const WorkOnTask = (props) => {
     //         </tr>
     //     })
     // }
+
+    if (formData.comment === "No Comments") {
+        //commentItems = <tr>{formData.comment.toString()}</tr>
+        commentItems = <tr>{formData.comment}</tr>
+    } else {
+
+        debugger
+
+        commentItems =
+            <tr>
+                <td>{formData.commentUser}</td>
+                <td>{formData.dateTime}</td>
+                <td>{formData.comment}</td>
+                <td><a title={"Edit"} className={"btn btn-primary"}
+                       href={`/comments/edit/${formData.commentId}?taskId=${id}&comment=${formData.comment}`}>
+                    Edit
+                </a>
+                </td>
+                <td>
+                    <a title={"Delete"} className={"btn btn-danger"}
+                       onClick={() => props.onDeleteComment(formData.commentId)}>
+                        Delete
+                    </a>
+                </td>
+            </tr>
+    }
 
     return (
         <div className="container">
@@ -223,31 +261,31 @@ const WorkOnTask = (props) => {
                     {/*    /!*    </table>*!/*/}
                     {/*    /!*</div>*!/*/}
 
-                    {/*    <table>*/}
-                    {/*        <thead>*/}
-                    {/*        <tr>*/}
-                    {/*            <th>Created By</th>*/}
-                    {/*            <th>Date Created</th>*/}
-                    {/*            <th>Comment</th>*/}
-                    {/*        </tr>*/}
-                    {/*        </thead>*/}
-                    {/*        <tbody>*/}
-                    {/*            {commentItems}*/}
-                    {/*        </tbody>*/}
-                    {/*    </table>*/}
-                    {/*</div>*/}
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Created By</th>
+                                <th>Date Created</th>
+                                <th>Comment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {commentItems}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    {/*<div>*/}
-                    {/*    <div className="form-group">*/}
-                    {/*        <form onSubmit={leaveComment}>*/}
+                    <div>
+                        <div className="form-group">
+                            <form onSubmit={leaveComment}>
 
-                    {/*            <label htmlFor="comment"><b>Add Comment</b></label>*/}
-                    {/*            <input id="comment" name="comment" onChange={handleChange}*/}
-                    {/*                   required placeholder="Leave a comment"/>*/}
-                    {/*            <button onClick={`/workOnTask/${id}`}>Leave a Comment</button>*/}
-                    {/*            /!*<a href={`/workOnTask/${id}`}>Leave a Comment</a>*!/*/}
-                    {/*        </form>*/}
-                    {/*    </div>*/}
+                                <label htmlFor="newComment"><b>Add Comment</b></label>
+                                <input id="newComment" name="newComment" onChange={handleChange}
+                                       required placeholder="Leave a comment"/>
+                                <button onClick={`/workOnTask/${id}`}>Leave a Comment</button>
+                                {/*<a href={`/workOnTask/${id}`}>Leave a Comment</a>*/}
+                            </form>
+                        </div>
 
                         <div className={'row'}>
                             <form onSubmit={onFormSubmit}>

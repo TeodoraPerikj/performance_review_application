@@ -69,6 +69,9 @@ const PerformanceReviewService = {
 
     viewTask: (id) => {
 /////////////////// user2
+        //// deleted username from the url
+
+        ///// username is from the active one
         return tasks_axios.get(`/taskInfo/${id}?username=user1`);
     },
 
