@@ -6,10 +6,7 @@ import comments_axios from '../custom-axios/comments_axios';
 const PerformanceReviewService = {
 
     fetchTasks: () => {
-        debugger
-        var tasks =  tasks_axios.get("/tasks");
-        console.log(tasks)
-        return tasks;
+        return tasks_axios.get("/tasks");
     },
 
     fetchUsers: () => {
@@ -18,6 +15,10 @@ const PerformanceReviewService = {
 
     fetchComments: () => {
         return comments_axios.get("/comments");
+    },
+
+    fetchNotAssignedUsers: () => {
+        return users_axios.get("/notAssignedUsers");
     },
 
     deleteTask: (id) => {
@@ -32,7 +33,6 @@ const PerformanceReviewService = {
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
             "assignee" : assignee,
-            //////                 ASSIGNEE
             "creator" : creator
         });
     },
@@ -45,7 +45,6 @@ const PerformanceReviewService = {
             "startDate" : startDate,
             "dueDate" : dueDate,
             "estimationDays" : estimationDays,
-           // "assignees" : assignees,
             "assignee": assignee,
             "creator" : creator
         });
@@ -62,17 +61,25 @@ const PerformanceReviewService = {
         })
     },
 
+    logout: () => {
+        return users_axios.get("/logout")
+    },
+
+    getActiveUser: () => {
+        return  users_axios.get("/login")
+    },
+
+    changeRole: (username, role) => {
+        return users_axios.post(`/changeRole?username=${username}&role=${role}`)
+    },
+
     getUserByUsername: (username) => {
 
         return users_axios.get(`/findUser?username=${username}`);
     },
 
     viewTask: (id) => {
-/////////////////// user2
-        //// deleted username from the url
-
-        ///// username is from the active one
-        return tasks_axios.get(`/taskInfo/${id}?username=user1`);
+        return tasks_axios.get(`/taskInfo/${id}`);
     },
 
     workOnTask: (id) => {
@@ -80,25 +87,11 @@ const PerformanceReviewService = {
     },
 
     leaveComment: (id, username, comment) => {
-        debugger;
         return comments_axios.post(`/comments/${id}/leaveComment?username=${username}&comment=${comment}`)
     },
 
     showUserPerformance: (chosenUsername, chosenType, dateFrom, dateTo) => {
-        debugger;
-        console.log(chosenUsername)
-        console.log(chosenType)
-        console.log(dateFrom)
-        console.log(dateTo)
-
         return users_axios.get(`/showUserPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`)
-
-        // return axios.get("/showUserPerformance", {
-        //     "chosenUsername": chosenUsername,
-        //     "chosenType": chosenType,
-        //     "dateFrom": dateFrom,
-        //     "dateTo": dateTo
-        // })
     },
 
     deleteComment: (id) => {

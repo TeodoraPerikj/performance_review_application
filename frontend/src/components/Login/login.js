@@ -1,15 +1,12 @@
 import React from 'react';
-import {useHistory} from "react-router-dom";
-import PerformanceReviewService from "../../repository/performanceReviewRepository";
 import PerformanceReviewRepository from "../../repository/performanceReviewRepository";
 
 const Login = (props) => {
 
-    const history = useHistory();
-
     const [formData, login] = React.useState({
         username : "",
-        password : ""
+        password : "",
+        activeUser : ""
 
     });
 
@@ -21,35 +18,50 @@ const Login = (props) => {
     }
 
     const onFormSubmit = (e) => {
-        debugger;
+
         e.preventDefault();
 
-        PerformanceReviewRepository.login(formData.username, formData.password).then(resp => {
-            localStorage.setItem("JWT", resp.data);
-            props.onLogin()
-            history.push("/tasks");
-        })
+        const username = formData.username
+        const password = formData.password
 
+        let element = document.getElementById("errorText")
+
+        if(username === "" || password === ""){
+            element.innerText = "Invalid Arguments Exception. All fields must be fulfilled!"
+        }
+        else {
+            element.innerText = ""
+            PerformanceReviewRepository.login(username, password)
+                .then((data) => {
+                    console.log(data.data)
+                    formData.activeUser = data.data.username
+                    window.open('/tasks', '_self')
+                }).catch((error) => {
+                console.log(error)
+            });
+        }
     }
 
     return (
         <div className="container">
+            <div><span id={"errorText"} className={"text-danger"}></span></div>
+
             <form className="form-signin mt-xl-5" onSubmit={onFormSubmit}>
                 <h2 className="form-signin-heading">Sign in</h2>
                 <p>
                     <label htmlFor="username" className="sr-only">Username</label>
                     <input type="text" id="username" name="username" onChange={change}
-                           className="form-control" placeholder="Username" required="" autoFocus=""/>
+                           className="form-control" placeholder="Username" required autoFocus=""/>
                 </p>
                 <p>
                     <label htmlFor="password" className="sr-only">Password</label>
                     <input type="password" id="password" name="password" onChange={change}
-                           className="form-control" placeholder="Password" required=""/>
+                           className="form-control" placeholder="Password" required/>
                 </p>
 
-                <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                <button className="btn btn-primary" type="submit">Sign in</button>
             </form>
-            <a href={"/register"} className="btn btn-block btn-light">Register here</a>
+            <a href={"/register"} className="btn btn-light">Register here</a>
         </div>
     );
 }

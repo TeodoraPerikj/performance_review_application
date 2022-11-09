@@ -1,12 +1,7 @@
-import React from 'react';
-import {useHistory} from "react-router-dom";
+import React, {useEffect} from 'react';
 import PerformanceReviewRepository from "../../../repository/performanceReviewRepository";
 
 const TaskAdd = (props) => {
-
-
-    // Redirect
-    const history = useHistory();
 
     const [formData, updateFormData] = React.useState({
         title: "",
@@ -15,9 +10,23 @@ const TaskAdd = (props) => {
         dueDate: "",
         estimationDays: "",
         assignee: "",
-        creator: ""
-
+        creator: "",
+        activeUser: {}
     });
+
+    useEffect(() => {
+
+        const getActiveUser = PerformanceReviewRepository.getActiveUser()
+            .then((data) => {
+
+                updateFormData({
+                    activeUser: data.data
+                })
+            }).catch((error) => {
+                console.log(error)
+            });
+
+    }, [])
 
     const handleChange = (e) => {
       updateFormData({
@@ -29,28 +38,57 @@ const TaskAdd = (props) => {
     const onFormSubmit = (e) => {
         e.preventDefault();
 
-        debugger;
-
         const title = formData.title;
         const description = formData.description;
         const startDate = formData.startDate;
         const dueDate = formData.dueDate;
         const estimationDays = formData.estimationDays;
-        // const assignees = formData.assignees;
-        const assignee = formData.assignee;
-        const creator = formData.creator;
-        //const creator = "USER";
 
-        //props.onAddTask(title, description, startDate, dueDate, estimationDays, assignees, creator);
+        let assignee;
 
-        PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignee, creator)
-            .then(() => {
-                window.open("/tasks","_self")
-            })
+        if(props.users.length === 1){
+            assignee = props.users[0].username
+        }
+        else {
+            assignee = formData.assignee;
+        }
+
+        const creator = formData.activeUser.username;
+
+        let element = document.getElementById("errorText")
+
+        if(title === "" || description === "" || startDate === "" || dueDate === "" || estimationDays === ""
+        || assignee === "" || creator === ""){
+            element.innerText = "Invalid Arguments Exception. All fields must be fulfilled!"
+        }
+        else {
+            element.innerText = ""
+            PerformanceReviewRepository.addTask(title, description, startDate, dueDate, estimationDays, assignee, creator)
+                .then(() => {
+                    window.open("/tasks", "_self")
+                }).catch((error) => {
+
+                    if (error.toString().startsWith("Error: Request failed with status code 400")) {
+                        element.innerText = "Estimation Days are greater than the days to work on a task!"
+                        console.log(error)
+                    } else if(error.toString().startsWith("Error: Request failed with status code 404")) {
+                        element.innerText = "Start Date cannot be after Due Date!"
+                        console.log(error)
+                    }
+                    else {
+                        element.innerText = "You should select assignee!"
+                    }
+                }
+            )
+        }
     }
 
+    if(formData.activeUser.ownedTask){
+        window.open("/tasks", "_self")
+    }
     return (
         <div className="container">
+            <div><span id={"errorText"} className={"text-danger"}></span></div>
             <div className="row">
                 <div className="col-md-5">
                     <form onSubmit={onFormSubmit}>
@@ -106,21 +144,18 @@ const TaskAdd = (props) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="creator">Creator</label>
-                            <select name="creator" className="form-control" onChange={handleChange}>
-                                {props.users.map((term) =>
-                                    <option value={term.username}>{term.username}</option>
-                                )}
-
-                            </select>
+                            <input type="text"
+                                   className="form-control"
+                                   id="creator"
+                                   name="creator"
+                                   placeholder={formData.activeUser.username}
+                                   disabled={true}/>
                         </div>
                         <div className="form-group">
                             <label>Choose Assignees</label>
-                            <select name="assignee" multiple
+
+                            <select name="assignee"
                                     className="form-control" onChange={handleChange}>
-                                {/*<option th:each="user : ${users}"*/}
-                                {/*        th:value="${user?.getUsername()}"*/}
-                                {/*        th:text="${user?.getUsername()}">*/}
-                                {/*</option>*/}
 
                                 {props.users.map((term) =>
                                 <option value={term.username}>{term.username}</option>
@@ -128,7 +163,6 @@ const TaskAdd = (props) => {
 
                             </select>
                         </div>
-                        {/*/!*href={"/tasks"} onClick={onFormSubmit}*!/*/}
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </form>
 

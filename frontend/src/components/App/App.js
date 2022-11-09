@@ -5,7 +5,7 @@ import Tasks from "../Tasks/TaskList/tasks";
 import PerformanceReviewRepository from "../../repository/performanceReviewRepository";
 import Users from "../Users/users";
 import Comments from "../Comments/comments";
-import Header from "../Header/header";
+import Header from "../Header/Header";
 import TaskAdd from "../Tasks/TaskAdd/taskAdd";
 import TaskEdit from "../Tasks/TaskEdit/taskEdit";
 import Login from "../Login/login";
@@ -17,6 +17,7 @@ import SelectParameters from "../ShowPerformance/SelectParameters/selectParamete
 import UserPerformance from "../ShowPerformance/UserPerformance/userPerformance";
 import CommentEdit from "../Comments/CommentEdit/commentEdit";
 import RegisterUser from "../Users/RegisterUser/RegisterUser";
+import ChangeRole from "../Users/ChangeRole/ChangeRole";
 
 class App extends Component {
 
@@ -28,7 +29,8 @@ class App extends Component {
             comments: [],
             activeUser: {},
             selectedUserInfo: {},
-            taskInfo: {}
+            taskInfo: {},
+            notAssignedUsers: []
         }
     }
 
@@ -46,9 +48,9 @@ class App extends Component {
                                 <WorkOnTask onDeleteComment={this.deleteComment}/>}/>
                             <Route path={"/tasks/taskInfo/:id"} exact render={() => <TaskInfo/>}/>
                             <Route path={"/tasks/edit/:id"} exact render={() =>
-                                <TaskEdit users={this.state.users} onEditTask={this.editTask}/>}/>
+                                <TaskEdit users={this.state.notAssignedUsers} onEditTask={this.editTask}/>}/>
                             <Route path={"/tasks/add"} exact render={() =>
-                                <TaskAdd users={this.state.users} onAddTask={this.addTask}/>}/>
+                                <TaskAdd users={this.state.notAssignedUsers} onAddTask={this.addTask}/>}/>
                             <Route path={"/tasks"} exact render={() =>
                                 <Tasks tasks={this.state.tasks} onDelete={this.deleteTask}
                                        onEdit={this.getTaskById} onViewTask={this.viewTask}/>}/>
@@ -64,12 +66,8 @@ class App extends Component {
                             <Route path={"/selectUser"} exact render={() => <SelectUser users={this.state.users}/>}/>
                             <Route path={"/showPerformance"} exact render={() => <UserPerformance/>}/>
                             <Route path={"/myTasks/:username"} exact render={() => <MyTasks/>}/>
-
-                             {/*<MyTasks userInfoForTask={this.state.selectedUserInfo} onEdit={this.editTask}*/}
-                             {/*            onDelete={this.deleteTask}/> }/>*/}
-                             {/*<Route path={"/selectUser"} exact render={() =>*/}
-                             {/*    <SelectUser users={this.state.users} onSelect={this.getUserByUsername}/>}/>*/}
-                            <Redirect to={"/tasks"}/>
+                            <Route path={"/changeRole/:username"} exact render={() => <ChangeRole/>}/>
+                            <Redirect to={"/login"}/>
                         </Switch>
                     </div>
                 </main>
@@ -81,13 +79,12 @@ class App extends Component {
     componentDidMount() {
         this.loadTasks();
         this.loadUsers();
-        this.loadComments();
+        this.loadNotAssignedUsers();
     }
 
     loadTasks = () => {
         PerformanceReviewRepository.fetchTasks()
             .then((data) => {
-                console.log(data.data)
                 this.setState({
                     tasks: data.data
                 })
@@ -108,6 +105,15 @@ class App extends Component {
             .then((data) => {
                 this.setState({
                     comments: data.data
+                })
+            });
+    }
+
+    loadNotAssignedUsers = () => {
+        PerformanceReviewRepository.fetchNotAssignedUsers()
+            .then((data) => {
+                this.setState({
+                    notAssignedUsers: data.data
                 })
             });
     }
@@ -136,7 +142,6 @@ class App extends Component {
     }
 
     editTask = (id, title, description, startDate, dueDate, estimationDays, assignees) => {
-        debugger;
         PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignees)
             .then(() => {
                 this.loadTasks();
@@ -146,6 +151,7 @@ class App extends Component {
     login = (username, password) => {
         PerformanceReviewRepository.login(username, password)
             .then((data) => {
+                console.log(data)
                 this.setState({
                     activeUser : data.data
                 })
@@ -153,7 +159,6 @@ class App extends Component {
     }
 
     getUserByUsername = (username) => {
-        debugger;
         PerformanceReviewRepository.getUserByUsername(username)
             .then((data) => {
                 this.setState({
@@ -163,7 +168,6 @@ class App extends Component {
     }
 
     viewTask = (id) => {
-        debugger;
         PerformanceReviewRepository.viewTask(id)
             .then((data) => {
                 debugger;
@@ -180,12 +184,6 @@ class App extends Component {
             })
     }
 
-    finishTask = (id) => {
-        PerformanceReviewRepository.finishTask(id)
-            .then(() => {
-                this.loadTasks()
-            })
-    }
 }
 
 export default App;

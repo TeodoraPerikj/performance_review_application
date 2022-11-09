@@ -1,22 +1,14 @@
 import React, {useEffect} from "react";
-import {useParams} from "react-router";
 import PerformanceReviewRepository from "../../../repository/performanceReviewRepository";
 
 const UserPerformance = (props) => {
 
     const parameters = new URLSearchParams(window.location.search)
 
-    console.log(parameters)
-
     const chosenUsername = parameters.get("chosenUsername")
     const chosenType = parameters.get("chosenType")
     const dateFrom = parameters.get("dateFrom")
     const dateTo = parameters.get("dateTo")
-
-    console.log(chosenUsername)
-    console.log(chosenType)
-    console.log(dateFrom)
-    console.log(dateTo)
 
     const [formData, updateFormData] = React.useState({
         user: "",
@@ -31,8 +23,6 @@ const UserPerformance = (props) => {
 
     useEffect(() => {
 
-        debugger;
-        console.log(chosenUsername)
         PerformanceReviewRepository.showUserPerformance(chosenUsername, chosenType, dateFrom, dateTo)
             .then((data) => {
                 updateFormData({
@@ -50,31 +40,6 @@ const UserPerformance = (props) => {
             });
 
     }, [])
-
-    const handleChange = (e) => {
-        updateFormData({
-            ...formData,
-            [e.target.name]: e.target.value.trim()
-        })
-    }
-
-    // const onFormSubmit = (e) => {
-    //     e.preventDefault();
-    //     debugger;
-    //     const title = formData.title !== "" ? formData.title : props.task.title;
-    //     const description = formData.description !== "" ? formData.description : props.task.description;
-    //     const startDate = formData.startDate !== "" ? formData.startDate : props.task.startDate;
-    //     const dueDate = formData.dueDate !== "" ? formData.dueDate : props.task.dueDate;
-    //     const estimationDays = formData.estimationDays !== "" ? formData.estimationDays : props.task.estimationDays;
-    //     const assignees = formData.assignees !== "" ? formData.assignees : props.task.assignees;
-    //     const creator = formData.creator;
-    //
-    //     PerformanceReviewRepository.editTask(id, title, description, startDate, dueDate, estimationDays, assignees, creator)
-    //         .then(() => {
-    //             // history.push("/tasks")
-    //             window.open("/tasks","_self")
-    //         })
-    // }
 
     let actualCalculatedPerformance;
 

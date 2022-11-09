@@ -55,16 +55,16 @@ const CommentEdit = (props) => {
                     <form onSubmit={onFormSubmit}>
 
                         <div className="form-group">
-                            <label htmlFor="editComment">Edit Comment</label>
-                            <input type="text"
-                                   className="form-control"
+                            <label htmlFor="editComment"><b>Edit Comment</b></label>
+                            <textarea className="form-control"
                                    id="editComment"
                                    name="editComment"
                                    onChange={handleChange}
                                    placeholder={formData.editComment}/>
                         </div>
 
-                        <button type="submit" className="btn btn-primary">Change</button>
+                        <button type="submit" className="btn btn-success"
+                                style={{marginRight: '10px'}}>Change Comment</button>
                         <a href={`/workOnTask/${taskId}`} type="button" className="btn btn-primary">Back</a>
                     </form>
                 </div>

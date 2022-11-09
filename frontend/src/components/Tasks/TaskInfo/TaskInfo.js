@@ -1,10 +1,9 @@
 import React, {useEffect} from 'react';
 import PerformanceReviewRepository from '../../../repository/performanceReviewRepository';
-import {useHistory, useParams} from "react-router";
+import {useParams} from "react-router";
 
 const TaskInfo = (props) => {
 
-    const history = useHistory();
     const {id} = useParams();
 
     const [formData, updateFormData] = React.useState({
@@ -17,7 +16,13 @@ const TaskInfo = (props) => {
         assignee: "",
         textAndType: "",
         href: "",
+        activeUser: "",
+        creator: "",
+        role: ""
     });
+
+    let dateToStart = formData.startDate.replace("T", " ");
+    let dateToFinish = formData.dueDate.replace("T", " ");
 
     useEffect(() => {
 
@@ -31,36 +36,17 @@ const TaskInfo = (props) => {
                     dueDate: data.data.task.dueDate,
                     estimationDays: data.data.task.estimationDays,
                     status: data.data.task.status,
-                    //assignee: data.data.assignedUsers,
                     assignee: data.data.assignee,
-                    textAndType: data.data.textAndType
+                    textAndType: data.data.textAndType,
+                    creator: data.data.creator,
+                    activeUser: data.data.activeUser,
+                    role: data.data.role
                 })
             }).catch((error) => {
                 console.log(error)
             });
 
     }, [])
-
-    const onFormSubmit = (e) => {
-        e.preventDefault();
-
-        history.push("/tasks");
-    }
-
-    const formStartTask = (e) => {
-        e.preventDefault();
-
-        history.push(`/workOnTask/${id}`)
-    }
-
-    const formJoinTask = (e) => {
-        e.preventDefault();
-
-        //formData.assignees += 'user1';
-        formData.assignee += 'user1';
-
-        history.push(`/workOnTask/${id}`)
-    }
 
     let button;
 
@@ -76,21 +62,14 @@ const TaskInfo = (props) => {
             Start Task
         </button>
     } else if (formData.textAndType === 'Start Task') {
-        debugger
         formData.href = `/workOnTask/${id}`;
-        button = <form onSubmit={formStartTask}>
-            <a className={'btn btn-primary'} href={`/workOnTask/${id}`}>{'Start task'}</a>
-        </form>
+        button = <form><a className={'btn btn-primary'} href={`/workOnTask/${id}`}>{'Start task'}</a></form>
     } else if (formData.textAndType === 'Join Task') {
         formData.href = `/workOnTask/${id}`;
-        button = <form onSubmit={formJoinTask}>
-            <a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a>
-        </form>
+        button = <form><a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a></form>
     } else if (formData.textAndType === 'Continue Task') {
         formData.href = `/workOnTask/${id}`;
-        button = <form onSubmit={formStartTask}>
-            <a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a>
-        </form>
+        button = <form><a className={'btn btn-primary'} href={formData.href}>{formData.textAndType}</a></form>
     } else if (formData.textAndType === 'Finished') {
         formData.href = `/workOnTask/${id}`;
         button = <button onClick={formData.href} disabled>
@@ -103,7 +82,7 @@ const TaskInfo = (props) => {
         </button>
     }
 
-    let items;
+    //let items;
 
     // if (formData.assignees.length === 0) {
     //    // formData.assignees.length === 1
@@ -113,6 +92,34 @@ const TaskInfo = (props) => {
     //         return <li>{user}</li>;
     //     })
     // }
+
+    let content;
+
+    if (formData.role === "ROLE_ADMIN" && formData.activeUser !== formData.creator
+        && formData.activeUser !== formData.assignee){
+
+        formData.href = `/workOnTask/${id}`;
+
+        content = <div>
+            <a href={formData.href} >
+                View Task
+            </a>
+        </div>
+    }
+    else if(formData.activeUser === formData.creator || formData.activeUser === formData.assignee){
+
+        content = <div><span>
+                 {formData.textAndType}
+             </span>
+            {button}
+        </div>
+    }
+    else {
+        content = <div>
+            <p className={"text-danger"}><b>You cannot work on this task because
+                you are not the creator or not assigned to this task.</b></p>
+        </div>
+    }
 
     return (
 
@@ -134,12 +141,12 @@ const TaskInfo = (props) => {
                     <div className="form-group">
                         <label htmlFor="startDate"><b>Start Date:</b></label>
                         <span className="form-control"
-                              id="startDate">{formData.startDate}</span>
+                              id="startDate">{dateToStart}</span>
                     </div>
                     <div className="form-group">
                         <label htmlFor="dueDate"><b>Due Date:</b></label>
                         <span className="form-control"
-                              id="dueDate">{formData.dueDate}</span>
+                              id="dueDate">{dateToFinish}</span>
                     </div>
                     <div className="form-group">
                         <label htmlFor="estimationDays"><b>Estimation Days:</b></label>
@@ -151,12 +158,12 @@ const TaskInfo = (props) => {
                         <span className="form-control"
                               id="status">{formData.status.toString()}</span>
                     </div>
-                    {/*<div className="form-group">*/}
-                    {/*    <label htmlFor="creator"><b>Creator:</b></label>*/}
-                    {/*    <span className="form-control"*/}
-                    {/*          id="creator"*/}
-                    {/*          th:text="${selectedTask.getCreator().getUsername()}"></span>*/}
-                    {/*</div>*/}
+
+                    <div className="form-group">
+                        <label htmlFor="creator"><b>Creator:</b></label>
+                        <span className="form-control"
+                              id="creator">{formData.creator}</span>
+                    </div>
 
                     <div className="form-group">
                         <label><b>Assignees:</b></label>
@@ -169,17 +176,13 @@ const TaskInfo = (props) => {
                 </div>
             </div>
             <div className={'row'}>
-                <form onSubmit={onFormSubmit}>
-                    <a href={'/tasks'} type="submit" className={'btn btn-primary'}>Back</a>
+
+                <form>
+                <a href={'/tasks'} type="submit" className={'btn btn-primary'}>Back</a>
                 </form>
             </div>
 
-            <div>
-             <span>
-                 {formData.textAndType}
-             </span>
-                {button}
-            </div>
+            {content}
 
         </div>
     );

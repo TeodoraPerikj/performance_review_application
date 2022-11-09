@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import PerformanceReviewRepository from "../../../repository/performanceReviewRepository";
 
 const TaskTerm = (props) => {
 
@@ -27,9 +28,72 @@ const TaskTerm = (props) => {
     //         </tr>
     //     })
     // }
+    const [formData, updateFormData] = React.useState({
+        activeUser: "",
+        role: ""
+    });
+
+    useEffect(() => {
+
+        const getActiveUser = PerformanceReviewRepository.getActiveUser()
+            .then((data) => {
+
+                updateFormData({
+                    activeUser: data.data.username,
+                    role: data.data.role
+                })
+            }).catch((error) => {
+                console.log(error)
+            });
+
+    }, [])
+
 
     let dateToStart = props.term.startDate.replace("T", " ");
     let dateToFinish = props.term.dueDate.replace("T", " ");
+
+    const onFormSubmit = (e) => {
+        e.preventDefault()
+
+        PerformanceReviewRepository.deleteTask(props.term.id).then(() => {
+            window.open("/tasks","_self")
+        })
+    }
+
+    let canEditTask;
+
+    if(formData.activeUser === props.term.creator){
+        canEditTask = <td scope={"col"}>
+            <a title={"Edit"} className={"btn btn-primary"} style={{width: '100%'}}
+               href={`/tasks/edit/${props.term.id}`}>
+                Edit
+            </a>
+        </td>
+    }
+
+    let canDeleteTask;
+
+    if(formData.activeUser === props.term.creator || formData.role === "ROLE_ADMIN"){
+        canDeleteTask = <td scope={"col"}>
+
+            <form onSubmit={onFormSubmit}>
+
+                <button type="submit" className="btn btn-danger" style={{width: '100%'}}>Delete</button>
+
+            </form>
+        </td>
+    }
+
+    let canViewTask;
+
+    if(formData.activeUser !== null && formData.activeUser !== ""){
+        canViewTask = <td scope={"col"}>
+            <a title={"View Task"} className={"btn btn-secondary"} style={{width: '100%'}}
+               href={`/tasks/taskInfo/${props.term.id}`}>
+                View Task
+            </a>
+        </td>
+    }
 
     return (
         <tr>
@@ -43,25 +107,9 @@ const TaskTerm = (props) => {
             <td scope={"col"}>{props.term.assignee}</td>
             {/*<td scope={"col"}>{commentItems}</td>*/}
             <td scope={"col"}>{props.term.comment}</td>
-            <td scope={"col"}>
-                <a title={"Edit"} className={"btn btn-primary"}
-                   href={`/tasks/edit/${props.term.id}`}>
-                    Edit
-                </a>
-            </td>
-            <td scope={"col"}>
-                <a title={"Delete"} className={"btn btn-danger"}
-                   onClick={() => props.onDelete(props.term.id)}>
-                    Delete
-                </a>
-            </td>
-            <td scope={"col"}>
-                <a title={"View Task"} className={"btn btn-secondary"}
-                   href={`/tasks/taskInfo/${props.term.id}`}>
-                    {/*onClick={() => props.onView(props.term.id)}*/}
-                    View Task
-                </a>
-            </td>
+            {canEditTask}
+            {canDeleteTask}
+            {canViewTask}
         </tr>
     );
 }
