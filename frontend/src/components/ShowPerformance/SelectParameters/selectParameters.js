@@ -55,7 +55,16 @@ const SelectParameters = (props) => {
         const dateFrom = formData.dateFrom;
         const dateTo = formData.dateTo;
 
-        window.open(`/showPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`,"_self")
+        let element = document.getElementById("errorText")
+
+        element.innerText = ""
+
+        if(chosenType === "Weekly" && (dateFrom === "" || dateTo === "")){
+           element.innerText = "You have to choose date from and date to!"
+        }
+        else {
+            window.open(`/showPerformance?chosenUsername=${chosenUsername}&chosenType=${chosenType}&dateFrom=${dateFrom}&dateTo=${dateTo}`, "_self")
+        }
     }
 
     if(formData.activeUser === null){
@@ -97,6 +106,9 @@ const SelectParameters = (props) => {
                 </form>
 
                 <a type="button" className="btn btn-primary" href={"/tasks"}>Back</a>
+                <div>
+                    <span id={"errorText"} className={"text-danger"}></span>
+                </div>
             </div>
         );
     }

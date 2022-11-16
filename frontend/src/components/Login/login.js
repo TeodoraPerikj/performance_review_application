@@ -37,7 +37,8 @@ const Login = (props) => {
                     formData.activeUser = data.data.username
                     window.open('/tasks', '_self')
                 }).catch((error) => {
-                console.log(error)
+                    element.innerText = "Invalid User Credentials Exception. Your username or password is incorrect!"
+                    console.log(error)
             });
         }
     }

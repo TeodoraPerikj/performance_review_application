@@ -212,10 +212,12 @@ const WorkOnTask = (props) => {
            </td>
         }
 
+        let dateComment = formData.dateTime.replace("T", " ")
+
         commentItems =
             <tr>
                 <td>{formData.commentUser}</td>
-                <td>{formData.dateTime}</td>
+                <td>{dateComment}</td>
                 <td>{formData.comment}</td>
                 {canEditComment}
                 {canDeleteComment}
@@ -338,7 +340,9 @@ const WorkOnTask = (props) => {
                             {canCancelTask}
 
 
-                            <a href={`/tasks/taskInfo/${id}`} className={'btn btn-primary'}>Back</a>
+                            <span>
+                                <a href={`/tasks/taskInfo/${id}`} className={'btn btn-primary'}>Back</a>
+                            </span>
                         </div>
                     </div>
                 </div>
